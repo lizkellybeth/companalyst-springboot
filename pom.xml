@@ -9,8 +9,8 @@
 		<version>2.3.3.RELEASE</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>demo-2</artifactId>
+	<groupId>edu.nrao</groupId>
+	<artifactId>companalyst</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>demo-2</name>
 	<description>Demo project for Spring Boot</description>
