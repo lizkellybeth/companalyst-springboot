@@ -9,23 +9,27 @@ import { JobDetailsService } from '../job-details.service';
   templateUrl: './company-job.component.html',
   styleUrls: ['./company-job.component.css']
 })
-export class CompanyJobComponent implements OnInit {
+export class CompanyJobComponent implements OnInit, AfterViewInit {
 
   @Input() jdmJobDescHistoryID: string;
-  @Input() jobDetails: JobDetails;
+  jobDetails: JobDetails;
 
   constructor(private jobDetailsService: JobDetailsService) { }
+  ngAfterViewInit(): void {
+    
+  }
 
   ngOnInit(): void {
     this.fetchJobDetails(this.jdmJobDescHistoryID);
   }
 
   public fetchJobDetails(jdmJobDescHistoryID: string) {
+    console.log("CompanyJobComponent fetchJobDetails! " + jdmJobDescHistoryID)
     this.jobDetailsService.fetchJobDetails(jdmJobDescHistoryID)
       .then(res => {
         console.log("fetched result: " + (res ));
         var details: JobDetails = res as JobDetails;
-        console.log("DETAILS: [" + details.CompanyJobCode + "]");
+        console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
         this.jobDetails = details;
       })
       .catch(err => {

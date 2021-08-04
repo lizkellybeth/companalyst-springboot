@@ -118,12 +118,14 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnDestroy
   }
   
   public fetchJobDetails(job: CompanyJob) {
+    console.log("fetchJobDetails().................." + job.JDMJobDescHistoryID);
     var jdmJobDescHistoryID = job.JDMJobDescHistoryID;
     this.jobDetailsService.fetchJobDetails(jdmJobDescHistoryID)
       .then(res => {
         console.log("fetched result: " + (res ));
         var details: JobDetails = res as JobDetails;
         console.log("DETAILS: [" + details.CompanyJobCode + "]");
+        console.log("ID: [" + details.JDMJobDescHistoryID + "]");
         job.Details = details;
         if (this.filteredJobs.length == 0){
           this.dataSource = new MatTableDataSource(this.companyJobs);

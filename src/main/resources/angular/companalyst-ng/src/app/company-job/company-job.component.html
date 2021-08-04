@@ -1,4 +1,4 @@
-<table id="tblJobDetails">
+<table id="tblJobDetails" *ngIf="jobDetails != null">
     <tr><th>JDMJobDescHistoryID</th>        <td>{{jobDetails.JDMJobDescHistoryID}}</td></tr>
     <tr><th>CompanyJobCode</th>     <td>{{jobDetails.CompanyJobCode}}</td></tr>
     <tr><th>CompanyJobTitle</th>    <td>{{jobDetails.CompanyJobTitle}}</td></tr>

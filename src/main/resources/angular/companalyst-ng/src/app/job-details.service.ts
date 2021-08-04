@@ -13,8 +13,8 @@ export class JobDetailsService {
 
   constructor(private http: HttpClient) {} 
 
-  fetchJobDetails(jobCode: string): Promise<JobDetails> { 
-    return this.http.get<JobDetails>(this.url + "?jobcode=" + jobCode).toPromise();
+  fetchJobDetails(jdmJobDescHistoryID: string): Promise<JobDetails> { 
+    return this.http.get<JobDetails>(this.url + "?jobcode=" + jdmJobDescHistoryID).toPromise();
   }
  
  

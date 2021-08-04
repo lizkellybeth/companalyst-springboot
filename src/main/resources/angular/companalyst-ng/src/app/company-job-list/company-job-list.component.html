@@ -41,14 +41,14 @@
           <div class="example-element-description">
             <div *ngIf="element.Details != null; else loading">
 
-              <app-company-job [jdmJobDescHistoryID]="element.Details.JDMJobDescHistoryID"></app-company-job>
+              <app-company-job [jdmJobDescHistoryID]="element.JDMJobDescHistoryID"></app-company-job>
 
             </div>            
           </div>
         </div>
       </td>
     </ng-container>
-
+s
     <ng-template #loading>
       loading...
     </ng-template>
