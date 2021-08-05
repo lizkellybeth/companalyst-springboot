@@ -27,7 +27,7 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnDestroy
   filteredJobs: CompanyJob[] = []
   jobDetails: JobDetails[] = [];
   dataSource = new MatTableDataSource(this.companyJobs);
-  displayedColumns: string[] = ['CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
+  displayedColumns: string[] = ['JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
   expandedElement: CompanyJob | null;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -69,7 +69,8 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnDestroy
         }
         else {// no filter, check every field ...
           for (var column of this.displayedColumns) {
-            if ((job[column]) && (job[column].includes(searchText))) {
+            var col = String(job[column]);
+            if ((job[column]) && (col.includes(searchText))) {
               if (!this.filteredJobs.includes(job)) {
                 this.filteredJobs.push(job)
               }
