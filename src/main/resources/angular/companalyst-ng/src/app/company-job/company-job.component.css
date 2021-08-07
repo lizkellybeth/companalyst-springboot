@@ -1,0 +1,37 @@
+#tblJobDetails, #tblUserDefinedFields {
+    width: 66%;
+    text-align: left;
+    margin: auto;
+}
+
+#tblJobDetails td , #tblUserDefinedFields  td {
+    border-top: 1px;
+    border-bottom: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-style: dashed;
+    vertical-align: top;
+}
+
+#tblJobDetails th , #tblUserDefinedFields  th{
+    border-top: 1px;
+    border-bottom: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-style: dashed ;
+    vertical-align: top;
+}
+
+.example-card {
+    max-width: 90%;
+    max-height: 400px;
+  }
+  
+  .example-header-image {
+    background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+    background-size: cover;
+  }
+
+mat-card {
+    overflow: auto;
+}

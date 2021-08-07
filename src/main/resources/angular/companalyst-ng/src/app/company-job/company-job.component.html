@@ -1,37 +1,127 @@
+<div>
+    <mat-card class="example-card" *ngIf="jobDetails != null">
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image"></div>
+        <mat-card-title  *ngIf="jobDetails != null">{{jobDetails.CompanyJobCode}}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table id="tblJobDetails" *ngIf="jobDetails != null">
+        <tr><th>Job Title</th><td>{{jobDetails.CompanyJobTitle}}</td> </tr>
+        <tr><th>FLSA Classification</th><td>{{jobDetails.FLSA_Classification}}</td> </tr>
+        <tr><th>Pay Grade</th><td>{{jobDetails.Pay_Grade}}</td> </tr>
+        <tr><th>Large Functional Group</th><td>{{jobDetails.Large_Functional_Group}}</td> </tr>
+        <tr><th>Job Family</th><td>{{jobDetails.Job_Family}}</td> </tr>
+        <tr><th>Minimum Education Requirement</th><td>{{jobDetails.Minimum_Education_Requirement}}</td> </tr>
+        <tr><th>Minimum Experience Requirement</th><td>{{jobDetails.Minimum_Experience_Requirement}}</td> </tr>
+        <tr><th>Position Designation</th><td>{{jobDetails.Position_Designation}}</td> </tr>
+        <tr><th>Locations Safety Sensitive</th><td>{{jobDetails.Locations_applicable_to_Safety_Sensitive_for_this_position}}</td> </tr>
+        <tr><th>Essential Duties and Responsibilities</th><td>{{jobDetails.Essential_Duties_and_Responsibilities}}</td> </tr>
+        <tr><th>Education Detail</th><td>{{jobDetails.Education_Detail}}</td> </tr>
+        <tr><th>Experience Detail</th><td>{{jobDetails.Experience_Detail}}</td> </tr>
+        <tr><th>Qualifications and Competencies</th><td>{{jobDetails.Qualifications_and_Competencies}}</td> </tr>
+        <tr><th>Nature of Work</th><td>{{jobDetails.Nature_of_Work}}</td> </tr>
+        <tr><th>Physical Requirements</th><td>{{jobDetails.Physical_Requirements}}</td> </tr>
+
+        <tr><th>JDMJobDescHistoryID</th>        <td>{{jobDetails.JDMJobDescHistoryID}}</td></tr>
+        <tr *ngIf="jobDetails.CompanyJobCode !== null && jobDetails.CompanyJobCode !== '' "><th>CompanyJobCode</th>     <td>{{jobDetails.CompanyJobCode}}</td></tr>
+        <tr *ngIf="jobDetails.CompanyJobTitle !== null && jobDetails.CompanyJobTitle !== '' "><th>CompanyJobTitle</th>    <td>{{jobDetails.CompanyJobTitle}}</td></tr>
+    
+        <tr *ngIf="jobDetails.JobFamily !== null && jobDetails.JobFamily !== '' "><th>JobFamily</th>          <td>{{jobDetails.JobFamily}}</td></tr>
+        <tr *ngIf="jobDetails.CompanyJobDesc !== null && jobDetails.CompanyJobDesc !== '' "><th>CompanyJobDesc</th>     <td>{{jobDetails.CompanyJobDesc}}</td></tr>
+        <tr *ngIf="jobDetails.JobFLSAStatusDesc !== null && jobDetails.JobFLSAStatusDesc !== '' "><th>JobFLSAStatusDesc</th>  <td>{{jobDetails.JobFLSAStatusDesc}}</td></tr>
+        <tr *ngIf="jobDetails.CompanyJobSummary !== null && jobDetails.CompanyJobSummary !== '' "><th>CompanyJobSummary</th>  <td>{{jobDetails.CompanyJobSummary}}</td></tr>
+        <tr *ngIf="jobDetails.Experience !== null && jobDetails.Experience !== '' "><th>Experience</th>         <td>{{jobDetails.Experience}}</td></tr>
+        <tr *ngIf="jobDetails.CompetencyNames !== null && jobDetails.CompetencyNames !== '' "><th>CompetencyNames</th>    <td>{{jobDetails.CompetencyNames}}</td></tr>
+        <tr *ngIf="jobDetails.Skills !== null && jobDetails.Skills !== '' "><th>Skills</th>             <td>{{jobDetails.Skills}}</td></tr>
+        <tr *ngIf="jobDetails.ReportsTo !== null && jobDetails.ReportsTo !== '' "><th>ReportsTo</th>          <td>{{jobDetails.ReportsTo}}</td></tr>
+        <tr *ngIf="jobDetails.CertificateLicenses !== null && jobDetails.CertificateLicenses !== '' "><th>CertificateLicenses</th>        <td>{{jobDetails.CertificateLicenses}}</td></tr>
+        <tr *ngIf="jobDetails.ManagePeople !== null && jobDetails.ManagePeople !== '' "><th>ManagePeople</th>       <td>{{jobDetails.ManagePeople}}</td></tr>
+        <tr *ngIf="jobDetails.EducationDesc !== null && jobDetails.EducationDesc !== '' "><th>EducationDesc</th>      <td>{{jobDetails.EducationDesc}}</td></tr>
+        <tr *ngIf="jobDetails.TimeSpents !== null && jobDetails.TimeSpents !== '' "><th>TimeSpents</th>         <td>{{jobDetails.TimeSpents}}</td></tr>
+        
+        <tr *ngIf="jobDetails.TierCode !== null && jobDetails.TierCode !== '' "><th>TierCode</th>           <td>{{jobDetails.TierCode}}</td></tr>
+        <tr *ngIf="jobDetails.TierDesc !== null && jobDetails.TierDesc !== '' "><th>TierDesc</th>           <td>{{jobDetails.TierDesc}}</td></tr>
+        <tr *ngIf="jobDetails.JobFocus !== null && jobDetails.JobFocus !== '' "><th>JobFocus</th>           <td>{{jobDetails.JobFocus}}</td></tr>
+        <tr *ngIf="jobDetails.JobFunction !== null && jobDetails.JobFunction !== '' "><th>JobFunction</th>        <td>{{jobDetails.JobFunction}}</td></tr>
+        <tr *ngIf="jobDetails.LastApprovedByUName !== null && jobDetails.LastApprovedByUName !== '' "><th>LastApprovedByUName</th>        <td>{{jobDetails.LastApprovedByUName}}</td></tr>
+        <tr *ngIf="jobDetails.LastApprovedDate !== null && jobDetails.LastApprovedDate !== '' "><th>LastApprovedDate</th>   <td>{{jobDetails.LastApprovedDate}}</td></tr>
+        <tr *ngIf="jobDetails.LastUpdateByUName !== null && jobDetails.LastUpdateByUName !== '' "><th>LastUpdateByUName</th>  <td>{{jobDetails.LastUpdateByUName}}</td></tr>
+        <tr *ngIf="jobDetails.LastUpdateDate !== null && jobDetails.LastUpdateDate !== '' "><th>LastUpdateDate</th>     <td>{{jobDetails.LastUpdateDate}}</td></tr>
+        <tr *ngIf="jobDetails.LastPublishedByUName !== null && jobDetails.LastPublishedByUName !== '' "><th>LastPublishedByUName</th>       <td>{{jobDetails.LastPublishedByUName}}</td></tr>
+        <tr *ngIf="jobDetails.LastPublishedDate !== null && jobDetails.LastPublishedDate !== '' "><th>LastPublishedDate</th>  <td>{{jobDetails.LastPublishedDate}}</td></tr>
+        <tr *ngIf="jobDetails.CompanyJobDescStatusCode !== null && jobDetails.CompanyJobDescStatusCode !== '' "><th>CompanyJobDescStatusCode</th>   <td>{{jobDetails.CompanyJobDescStatusCode}}</td></tr>
+        <tr *ngIf="jobDetails.CompanyJobDescStatusDesc !== null && jobDetails.CompanyJobDescStatusDesc !== '' "><th>CompanyJobDescStatusDesc</th>   <td>{{jobDetails.CompanyJobDescStatusDesc}}</td></tr>
+        <tr *ngIf="jobDetails.Organization !== null && jobDetails.Organization !== '' "><th>Organization</th>       <td>{{jobDetails.Organization}}</td></tr>
+        <tr *ngIf="jobDetails.Date !== null && jobDetails.Date !== '' "><th>Date</th>               <td>{{jobDetails.Date}}</td></tr>
+        <tr *ngIf="jobDetails.Department !== null && jobDetails.Department !== '' "><th>Department</th>         <td>{{jobDetails.Department}}</td></tr>
+        <tr *ngIf="jobDetails.Comments !== null && jobDetails.Comments !== '' "><th>Comments</th>           <td>{{jobDetails.Comments}}</td></tr>
+        
+    </table>
+        
+    </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button>LIKE</button>
+        <button mat-button>SHARE</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+
+<!--
 <table id="tblJobDetails" *ngIf="jobDetails != null">
     <tr><th>JDMJobDescHistoryID</th>        <td>{{jobDetails.JDMJobDescHistoryID}}</td></tr>
-    <tr><th>CompanyJobCode</th>     <td>{{jobDetails.CompanyJobCode}}</td></tr>
-    <tr><th>CompanyJobTitle</th>    <td>{{jobDetails.CompanyJobTitle}}</td></tr>
+    <tr *ngIf="jobDetails.Experience !== null && jobDetails.CompanyJobCode !== '' "><th>CompanyJobCode</th>     <td>{{jobDetails.CompanyJobCode}}</td></tr>
+    <tr *ngIf="jobDetails.Experience !== null && jobDetails.CompanyJobTitle !== '' "><th>CompanyJobTitle</th>    <td>{{jobDetails.CompanyJobTitle}}</td></tr>
 
-    <tr><th>JobFamily</th>          <td>{{jobDetails.JobFamily}}</td></tr>
-    <tr><th>CompanyJobDesc</th>     <td>{{jobDetails.CompanyJobDesc}}</td></tr>
-    <tr><th>JobFLSAStatusDesc</th>  <td>{{jobDetails.JobFLSAStatusDesc}}</td></tr>
-    <tr><th>CompanyJobSummary</th>  <td>{{jobDetails.CompanyJobSummary}}</td></tr>
-    <tr><th>Experience</th>         <td>{{jobDetails.Experience}}</td></tr>
-    <tr><th>CompetencyNames</th>    <td>{{jobDetails.CompetencyNames}}</td></tr>
-    <tr><th>Skills</th>             <td>{{jobDetails.Skills}}</td></tr>
-    <tr><th>ReportsTo</th>          <td>{{jobDetails.ReportsTo}}</td></tr>
-    <tr><th>CertificateLicenses</th>        <td>{{jobDetails.CertificateLicenses}}</td></tr>
-    <tr><th>ManagePeople</th>       <td>{{jobDetails.ManagePeople}}</td></tr>
-    <tr><th>EducationDesc</th>      <td>{{jobDetails.EducationDesc}}</td></tr>
-    <tr><th>TimeSpents</th>         <td>{{jobDetails.TimeSpents}}</td></tr>
+    <tr *ngIf="jobDetails.JobFamily !== null && jobDetails.JobFamily !== '' "><th>JobFamily</th>          <td>{{jobDetails.JobFamily}}</td></tr>
+    <tr *ngIf="jobDetails.CompanyJobDesc !== null && jobDetails.CompanyJobDesc !== '' "><th>CompanyJobDesc</th>     <td>{{jobDetails.CompanyJobDesc}}</td></tr>
+    <tr *ngIf="jobDetails.JobFLSAStatusDesc !== null && jobDetails.JobFLSAStatusDesc !== '' "><th>JobFLSAStatusDesc</th>  <td>{{jobDetails.JobFLSAStatusDesc}}</td></tr>
+    <tr *ngIf="jobDetails.CompanyJobSummary !== null && jobDetails.CompanyJobSummary !== '' "><th>CompanyJobSummary</th>  <td>{{jobDetails.CompanyJobSummary}}</td></tr>
+    <tr *ngIf="jobDetails.Experience !== null && jobDetails.Experience !== '' "><th>Experience</th>         <td>{{jobDetails.Experience}}</td></tr>
+    <tr *ngIf="jobDetails.CompetencyNames !== null && jobDetails.CompetencyNames !== '' "><th>CompetencyNames</th>    <td>{{jobDetails.CompetencyNames}}</td></tr>
+    <tr *ngIf="jobDetails.Skills !== null && jobDetails.Skills !== '' "><th>Skills</th>             <td>{{jobDetails.Skills}}</td></tr>
+    <tr *ngIf="jobDetails.ReportsTo !== null && jobDetails.ReportsTo !== '' "><th>ReportsTo</th>          <td>{{jobDetails.ReportsTo}}</td></tr>
+    <tr *ngIf="jobDetails.CertificateLicenses !== null && jobDetails.CertificateLicenses !== '' "><th>CertificateLicenses</th>        <td>{{jobDetails.CertificateLicenses}}</td></tr>
+    <tr *ngIf="jobDetails.ManagePeople !== null && jobDetails.ManagePeople !== '' "><th>ManagePeople</th>       <td>{{jobDetails.ManagePeople}}</td></tr>
+    <tr *ngIf="jobDetails.EducationDesc !== null && jobDetails.EducationDesc !== '' "><th>EducationDesc</th>      <td>{{jobDetails.EducationDesc}}</td></tr>
+    <tr *ngIf="jobDetails.TimeSpents !== null && jobDetails.TimeSpents !== '' "><th>TimeSpents</th>         <td>{{jobDetails.TimeSpents}}</td></tr>
    
-    <tr><th>TierCode</th>           <td>{{jobDetails.TierCode}}</td></tr>
-    <tr><th>TierDesc</th>           <td>{{jobDetails.TierDesc}}</td></tr>
-    <tr><th>JobFocus</th>           <td>{{jobDetails.JobFocus}}</td></tr>
-    <tr><th>JobFunction</th>        <td>{{jobDetails.JobFunction}}</td></tr>
-    <tr><th>LastApprovedByUName</th>        <td>{{jobDetails.LastApprovedByUName}}</td></tr>
-    <tr><th>LastApprovedDate</th>   <td>{{jobDetails.LastApprovedDate}}</td></tr>
-    <tr><th>LastUpdateByUName</th>  <td>{{jobDetails.LastUpdateByUName}}</td></tr>
-    <tr><th>LastUpdateDate</th>     <td>{{jobDetails.LastUpdateDate}}</td></tr>
-    <tr><th>LastPublishedByUName</th>       <td>{{jobDetails.LastPublishedByUName}}</td></tr>
-    <tr><th>LastPublishedDate</th>  <td>{{jobDetails.LastPublishedDate}}</td></tr>
-    <tr><th>CompanyJobDescStatusCode</th>   <td>{{jobDetails.CompanyJobDescStatusCode}}</td></tr>
-    <tr><th>CompanyJobDescStatusDesc</th>   <td>{{jobDetails.CompanyJobDescStatusDesc}}</td></tr>
-    <tr><th>Organization</th>       <td>{{jobDetails.Organization}}</td></tr>
-    <tr><th>Date</th>               <td>{{jobDetails.Date}}</td></tr>
-    <tr><th>Department</th>         <td>{{jobDetails.Department}}</td></tr>
-    <tr><th>Comments</th>           <td>{{jobDetails.Comments}}</td></tr>
+    <tr *ngIf="jobDetails.TierCode !== null && jobDetails.TierCode !== '' "><th>TierCode</th>           <td>{{jobDetails.TierCode}}</td></tr>
+    <tr *ngIf="jobDetails.TierDesc !== null && jobDetails.TierDesc !== '' "><th>TierDesc</th>           <td>{{jobDetails.TierDesc}}</td></tr>
+    <tr *ngIf="jobDetails.JobFocus !== null && jobDetails.JobFocus !== '' "><th>JobFocus</th>           <td>{{jobDetails.JobFocus}}</td></tr>
+    <tr *ngIf="jobDetails.JobFunction !== null && jobDetails.JobFunction !== '' "><th>JobFunction</th>        <td>{{jobDetails.JobFunction}}</td></tr>
+    <tr *ngIf="jobDetails.LastApprovedByUName !== null && jobDetails.LastApprovedByUName !== '' "><th>LastApprovedByUName</th>        <td>{{jobDetails.LastApprovedByUName}}</td></tr>
+    <tr *ngIf="jobDetails.LastApprovedDate !== null && jobDetails.LastApprovedDate !== '' "><th>LastApprovedDate</th>   <td>{{jobDetails.LastApprovedDate}}</td></tr>
+    <tr *ngIf="jobDetails.LastUpdateByUName !== null && jobDetails.LastUpdateByUName !== '' "><th>LastUpdateByUName</th>  <td>{{jobDetails.LastUpdateByUName}}</td></tr>
+    <tr *ngIf="jobDetails.LastUpdateDate !== null && jobDetails.LastUpdateDate !== '' "><th>LastUpdateDate</th>     <td>{{jobDetails.LastUpdateDate}}</td></tr>
+    <tr *ngIf="jobDetails.LastPublishedByUName !== null && jobDetails.LastPublishedByUName !== '' "><th>LastPublishedByUName</th>       <td>{{jobDetails.LastPublishedByUName}}</td></tr>
+    <tr *ngIf="jobDetails.LastPublishedDate !== null && jobDetails.LastPublishedDate !== '' "><th>LastPublishedDate</th>  <td>{{jobDetails.LastPublishedDate}}</td></tr>
+    <tr *ngIf="jobDetails.CompanyJobDescStatusCode !== null && jobDetails.CompanyJobDescStatusCode !== '' "><th>CompanyJobDescStatusCode</th>   <td>{{jobDetails.CompanyJobDescStatusCode}}</td></tr>
+    <tr *ngIf="jobDetails.CompanyJobDescStatusDesc !== null && jobDetails.CompanyJobDescStatusDesc !== '' "><th>CompanyJobDescStatusDesc</th>   <td>{{jobDetails.CompanyJobDescStatusDesc}}</td></tr>
+    <tr *ngIf="jobDetails.Organization !== null && jobDetails.Organization !== '' "><th>Organization</th>       <td>{{jobDetails.Organization}}</td></tr>
+    <tr *ngIf="jobDetails.Date !== null && jobDetails.Date !== '' "><th>Date</th>               <td>{{jobDetails.Date}}</td></tr>
+    <tr *ngIf="jobDetails.Department !== null && jobDetails.Department !== '' "><th>Department</th>         <td>{{jobDetails.Department}}</td></tr>
+    <tr *ngIf="jobDetails.Comments !== null && jobDetails.Comments !== '' "><th>Comments</th>           <td>{{jobDetails.Comments}}</td></tr>
+
+    <br>
+    <tr><th>FLSA_Classification</th><td>{{jobDetails.FLSA_Classification}}</td> </tr>
+    <tr><th>Pay_Grade</th><td>{{jobDetails.Pay_Grade}}</td> </tr>
+    <tr><th>Large_Functional_Group</th><td>{{jobDetails.Large_Functional_Group}}</td> </tr>
+    <tr><th>Job_Family</th><td>{{jobDetails.Job_Family}}</td> </tr>
+    <tr><th>Minimum_Education_Requirement</th><td>{{jobDetails.Minimum_Education_Requirement}}</td> </tr>
+    <tr><th>Minimum_Experience_Requirement</th><td>{{jobDetails.Minimum_Experience_Requirement}}</td> </tr>
+    <tr><th>Position_Designation</th><td>{{jobDetails.Position_Designation}}</td> </tr>
+    <tr><th>Locations_Safety_Sensitive</th><td>{{jobDetails.Locations_applicable_to_Safety_Sensitive_for_this_position}}</td> </tr>
+    <tr><th>Essential_Duties_and_Responsibilities</th><td>{{jobDetails.Essential_Duties_and_Responsibilities}}</td> </tr>
+    <tr><th>Education_Detail</th><td>{{jobDetails.Education_Detail}}</td> </tr>
+    <tr><th>Experience_Detail</th><td>{{jobDetails.Experience_Detail}}</td> </tr>
+    <tr><th>Qualifications_and_Competencies</th><td>{{jobDetails.Qualifications_and_Competencies}}</td> </tr>
+    <tr><th>Nature_of_Work</th><td>{{jobDetails.Nature_of_Work}}</td> </tr>
+    <tr><th>Physical_Requirements</th><td>{{jobDetails.Physical_Requirements}}</td> </tr>
+
+ 
+
 </table>
 
-
+-->

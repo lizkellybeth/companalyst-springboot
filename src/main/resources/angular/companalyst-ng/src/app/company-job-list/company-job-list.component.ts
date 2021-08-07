@@ -9,6 +9,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { FormBuilder } from '@angular/forms';
 import { JobDetails } from '../job-details';
 
+
 @Component({
   selector: 'app-company-job-list',
   templateUrl: './company-job-list.component.html',
@@ -21,6 +22,7 @@ import { JobDetails } from '../job-details';
     ]),
   ],
 })
+
 export class CompanyJobListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   companyJobs: CompanyJob[] = []

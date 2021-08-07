@@ -36,5 +36,21 @@ export interface JobDetails {
     Department: string
     Comments: string
         
-    
+    //user defined fields
+    FLSA_Classification : string
+    Pay_Grade : string
+    Large_Functional_Group : string
+    Job_Family : string
+    Minimum_Education_Requirement : string
+    Minimum_Experience_Requirement : string
+    Position_Designation : string
+    Locations_applicable_to_Safety_Sensitive_for_this_position : string
+    Essential_Duties_and_Responsibilities : string
+    Education_Detail : string
+    Experience_Detail : string
+    Qualifications_and_Competencies : string
+    Nature_of_Work : string
+    Physical_Requirements : string
+   
+
 }
