@@ -1,4 +1,8 @@
 package edu.nrao.companalyst.data;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import org.json.*;
 
 public class CompanyJobDetails {
 
@@ -39,14 +43,70 @@ public class CompanyJobDetails {
 	private String comments;
 	
 	//fields below this point contain blank spaces in field names in json response from companalyst
+	private String FLSA_Classification;
+	private String Pay_Grade;
+	private String Large_Functional_Group;
+	private String Job_Family;
+	private String Minimum_Education_Requirement;
+	private String Minimum_Experience_Requirement;
+	private String Position_Designation;
+	private String Locations_applicable_to_Safety_Sensitive_for_this_position;
+	private String Essential_Duties_and_Responsibilities;
+	private String Education_Detail;
+	private String Experience_Detail;
+	private String Qualifications_and_Competencies;
+	private String Nature_of_Work;
+	private String Physical_Requirements;
+
+/**
+	private String EEO_NUM;
+	private String EEO_Code;
+	private String EEO_Job_Group;
+	private String Functional_Job_Group;
+	private String Position_Typically_Supervises;
+	private String Special_Requirements;
+	private String Typical_Work_Schedule;
+	private String FLSA_Test_HR_Comp_use_only;
+	private String Organization;
+	private String Date;
+	private String Department;
+	private String Job_Status;
+	private String Amount_of_Travel_Required;
+	private String Prepared_by;
+	private String Prepared_by_Date;
+	private String Approval_Signature;
+	private String Approval_Signature_Date;
+	private String Incumbent_Signature;
+	private String Incumbent_Signature_Date;
+	private String Comments;
+	private String Disclaimer_1;
+	private String Reports_to;
+	private String Work_Schedule;
+	private String Positions_Supervised;
+	private String Additional_Requirements;
+	private String Computer_Skills;
+	private String Work_Environment;
+	private String Licensure_certification;
 	
-	private String payGrade;
-	private String largeFunctionalGroup;
-	private String jobStatus;
+	*/
 	
 	public CompanyJobDetails() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public CompanyJobDetails(String json) {
+		super();
+		JSONObject obj = new JSONObject(json);
+		Iterator<String> keys = obj.keys();
+		Hashtable<String, String> cleanKeys = new Hashtable<>();
+		while (keys.hasNext()) {
+			String dirty = keys.next();
+			System.out.println(dirty);
+			String clean = dirty.replace(" " , "_");
+			cleanKeys.put(clean, obj.getString(dirty));
+		}
+
 	}
 
 
@@ -320,15 +380,6 @@ public class CompanyJobDetails {
 	}
 
 
-	public String getPayGrade() {
-		return payGrade;
-	}
-
-
-	public void setPayGrade(String payGrade) {
-		this.payGrade = payGrade;
-	}
-
 
 	public String getOrganization() {
 		return organization;
@@ -337,26 +388,6 @@ public class CompanyJobDetails {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
-	}
-
-
-	public String getLargeFunctionalGroup() {
-		return largeFunctionalGroup;
-	}
-
-
-	public void setLargeFunctionalGroup(String largeFunctionalGroup) {
-		this.largeFunctionalGroup = largeFunctionalGroup;
-	}
-
-
-	public String getJobStatus() {
-		return jobStatus;
-	}
-
-
-	public void setJobStatus(String jobStatus) {
-		this.jobStatus = jobStatus;
 	}
 
 
@@ -387,6 +418,119 @@ public class CompanyJobDetails {
 
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+
+	public String getFLSA_Classification() {
+		return FLSA_Classification;
+	}
+
+	public void setFLSA_Classification(String fLSA_Classification) {
+		FLSA_Classification = fLSA_Classification;
+	}
+
+	public String getPay_Grade() {
+		return Pay_Grade;
+	}
+
+	public void setPay_Grade(String pay_Grade) {
+		Pay_Grade = pay_Grade;
+	}
+
+	public String getLarge_Functional_Group() {
+		return Large_Functional_Group;
+	}
+
+	public void setLarge_Functional_Group(String large_Functional_Group) {
+		Large_Functional_Group = large_Functional_Group;
+	}
+
+	public String getJob_Family() {
+		return Job_Family;
+	}
+
+	public void setJob_Family(String job_Family) {
+		Job_Family = job_Family;
+	}
+
+	public String getMinimum_Education_Requirement() {
+		return Minimum_Education_Requirement;
+	}
+
+	public void setMinimum_Education_Requirement(String minimum_Education_Requirement) {
+		Minimum_Education_Requirement = minimum_Education_Requirement;
+	}
+
+	public String getMinimum_Experience_Requirement() {
+		return Minimum_Experience_Requirement;
+	}
+
+	public void setMinimum_Experience_Requirement(String minimum_Experience_Requirement) {
+		Minimum_Experience_Requirement = minimum_Experience_Requirement;
+	}
+
+	public String getPosition_Designation() {
+		return Position_Designation;
+	}
+
+	public void setPosition_Designation(String position_Designation) {
+		Position_Designation = position_Designation;
+	}
+
+	public String getLocations_applicable_to_Safety_Sensitive_for_this_position() {
+		return Locations_applicable_to_Safety_Sensitive_for_this_position;
+	}
+
+	public void setLocations_applicable_to_Safety_Sensitive_for_this_position(
+			String locations_applicable_to_Safety_Sensitive_for_this_position) {
+		Locations_applicable_to_Safety_Sensitive_for_this_position = locations_applicable_to_Safety_Sensitive_for_this_position;
+	}
+
+	public String getEssential_Duties_and_Responsibilities() {
+		return Essential_Duties_and_Responsibilities;
+	}
+
+	public void setEssential_Duties_and_Responsibilities(String essential_Duties_and_Responsibilities) {
+		Essential_Duties_and_Responsibilities = essential_Duties_and_Responsibilities;
+	}
+
+	public String getEducation_Detail() {
+		return Education_Detail;
+	}
+
+	public void setEducation_Detail(String education_Detail) {
+		Education_Detail = education_Detail;
+	}
+
+	public String getExperience_Detail() {
+		return Experience_Detail;
+	}
+
+	public void setExperience_Detail(String experience_Detail) {
+		Experience_Detail = experience_Detail;
+	}
+
+	public String getQualifications_and_Competencies() {
+		return Qualifications_and_Competencies;
+	}
+
+	public void setQualifications_and_Competencies(String qualifications_and_Competencies) {
+		Qualifications_and_Competencies = qualifications_and_Competencies;
+	}
+
+	public String getNature_of_Work() {
+		return Nature_of_Work;
+	}
+
+	public void setNature_of_Work(String nature_of_Work) {
+		Nature_of_Work = nature_of_Work;
+	}
+
+	public String getPhysical_Requirements() {
+		return Physical_Requirements;
+	}
+
+	public void setPhysical_Requirements(String physical_Requirements) {
+		Physical_Requirements = physical_Requirements;
 	}
 
 	
