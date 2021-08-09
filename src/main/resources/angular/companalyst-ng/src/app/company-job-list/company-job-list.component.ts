@@ -1,6 +1,6 @@
 import { JobDetailsService } from './../job-details.service';
 import { CompanyJobListService } from './../company-job-list.service';
-import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, ElementRef, OnDestroy, Input, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import { CompanyJob } from '../company-job';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,12 +8,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { FormBuilder } from '@angular/forms';
 import { JobDetails } from '../job-details';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 
 @Component({
   selector: 'app-company-job-list',
   templateUrl: './company-job-list.component.html',
   styleUrls: ['./company-job-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.Default,
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -23,13 +25,16 @@ import { JobDetails } from '../job-details';
   ],
 })
 
-export class CompanyJobListComponent implements OnInit, AfterViewInit, OnDestroy {
+export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges {
 
-  companyJobs: CompanyJob[] = []
+  @Input() companyJobs!: CompanyJob[];
+  @Input() displayedColumns: string[];
+
+  dataSource: MatTableDataSource<CompanyJob> = new MatTableDataSource(this.companyJobs);
+
   filteredJobs: CompanyJob[] = []
   jobDetails: JobDetails[] = [];
-  dataSource = new MatTableDataSource(this.companyJobs);
-  displayedColumns: string[] = ['JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
+  //displayedColumns: string[] = ['JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
   expandedElement: CompanyJob | null;
 
   @ViewChild(MatSort) sort: MatSort;
@@ -41,106 +46,29 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnDestroy
     searchFilter: ['']
   })
   
-  constructor(private jobListService: CompanyJobListService, private jobDetailsService: JobDetailsService, private formBuilder: FormBuilder) { }
+  constructor( private jobDetailsService: JobDetailsService, private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) {  }
+  ngOnChanges(changes: SimpleChanges): void {
+    //this.companyJobs = [...this.companyJobs]
+    this.filteredJobs = this.companyJobs;
+    this.dataSource  = new MatTableDataSource(this.filteredJobs);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    //console.log("HEY! [" + this.companyJobs + "]");
+  }
 
   ngOnInit(): void {
-    this.fetchCompanyJobList()
   }
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
-  }
+}
 
   ngOnDestroy() {
     
   }
 
-  clickSearch() {
-    console.log("hey! " + JSON.stringify(this.searchForm.value['searchText']));
-    var searchText: string = this.searchForm.value['searchText'];
-    var searchFilter: string = this.searchForm.value['searchFilter'];
-    this.filteredJobs = []
-    for (var job of this.companyJobs) {
-      if (searchText.length > 0) {
-        if (searchFilter && searchFilter.length > 0) {// filter has been selected...
-          var checkField: string = String(job[searchFilter]);
-          if (checkField.includes(searchText)) {
-            this.filteredJobs.push(job)
-          }
-        }
-        else {// no filter, check every field ...
-          for (var column of this.displayedColumns) {
-            var col = String(job[column]);
-            if ((job[column]) && (col.includes(searchText))) {
-              if (!this.filteredJobs.includes(job)) {
-                this.filteredJobs.push(job)
-              }
-            }
-          }
-          //CompanyJobDesc is not included in the table columns
-          if ((job["CompanyJobDesc"]) && (job["CompanyJobDesc"].includes(searchText))) {
-            if (!this.filteredJobs.includes(job)) {
-              this.filteredJobs.push(job)
-            }
-          }
-        }
-        this.filteredJobs = [...this.filteredJobs]; //alerts the angular change detection mechanism
-        this.dataSource = new MatTableDataSource(this.filteredJobs);
-        this.ngAfterViewInit();
-    
-      } else {
-        //no search text, do nothing
-      }
-    }
-  }
-
-  clickClear() {
-    this.filteredJobs = []
-    this.dataSource = new MatTableDataSource(this.companyJobs);
-    this.ngAfterViewInit();
-    this.searchForm.reset();
-  }
-
   clickDetails(job: CompanyJob){
     console.log("JOBCODE: [" + job.CompanyJobCode + "]");
-    this.fetchJobDetails(job);
   }
-
-  public fetchCompanyJobList() {
-    this.jobListService.fetchCompanyJobList()
-      .then(res => {
-        console.log("fetched result: " + (res ));
-        this.companyJobs = res;
-        this.dataSource = new MatTableDataSource(this.companyJobs);
-        this.ngAfterViewInit();
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  }
-  
-  public fetchJobDetails(job: CompanyJob) {
-    console.log("fetchJobDetails().................." + job.JDMJobDescHistoryID);
-    var jdmJobDescHistoryID = job.JDMJobDescHistoryID;
-    this.jobDetailsService.fetchJobDetails(jdmJobDescHistoryID)
-      .then(res => {
-        console.log("fetched result: " + (res ));
-        var details: JobDetails = res as JobDetails;
-        console.log("DETAILS: [" + details.CompanyJobCode + "]");
-        console.log("ID: [" + details.JDMJobDescHistoryID + "]");
-        job.Details = details;
-        if (this.filteredJobs.length == 0){
-          this.dataSource = new MatTableDataSource(this.companyJobs);
-        } else {
-          this.dataSource = new MatTableDataSource(this.filteredJobs);
-        }
-        this.ngAfterViewInit();
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  }
-  
-
 }
