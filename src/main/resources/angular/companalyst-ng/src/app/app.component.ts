@@ -1,4 +1,5 @@
-import { AfterViewInit } from '@angular/core';
+import { AfterViewInit, SimpleChanges } from '@angular/core';
+import { OnChanges } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { CompanyJob } from './company-job';
 import { CompanyJobListService } from './company-job-list.service';
@@ -8,12 +9,10 @@ import { CompanyJobListService } from './company-job-list.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit{
 
   title = 'companalyst-ng';
   companyJobs: CompanyJob[] = [];
-  filteredJobs: CompanyJob[] = [];
-  displayedColumns: string[] = ['JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
 
   constructor(private jobListService: CompanyJobListService) { }
 
@@ -36,8 +35,4 @@ export class AppComponent implements OnInit, AfterViewInit {
       });
   }
   
-  public filterHandler(filtered: CompanyJob[]){
-    this.filteredJobs = filtered;
-  }
-
 }

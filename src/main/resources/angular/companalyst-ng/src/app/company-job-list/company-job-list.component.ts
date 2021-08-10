@@ -9,13 +9,13 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { FormBuilder } from '@angular/forms';
 import { JobDetails } from '../job-details';
 import { ChangeDetectionStrategy } from '@angular/core';
+import { CdkRow } from '@angular/cdk/table';
 
 
 @Component({
   selector: 'app-company-job-list',
   templateUrl: './company-job-list.component.html',
   styleUrls: ['./company-job-list.component.css'],
-  changeDetection: ChangeDetectionStrategy.Default,
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0'})),
@@ -28,41 +28,37 @@ import { ChangeDetectionStrategy } from '@angular/core';
 export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() companyJobs!: CompanyJob[];
-  @Input() displayedColumns: string[];
+  filteredJobs: CompanyJob[];
 
   dataSource: MatTableDataSource<CompanyJob> = new MatTableDataSource(this.companyJobs);
+  displayedColumns: string[] = ['JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
 
-  filteredJobs: CompanyJob[] = []
-  jobDetails: JobDetails[] = [];
-  //displayedColumns: string[] = ['JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
   expandedElement: CompanyJob | null;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  selectedFilter = ""
-  searchForm = this.formBuilder.group({
-    searchText: [''],
-    searchFilter: ['']
-  })
-  
-  constructor( private jobDetailsService: JobDetailsService, private formBuilder: FormBuilder, private cdr: ChangeDetectorRef) {  }
-  ngOnChanges(changes: SimpleChanges): void {
-    //this.companyJobs = [...this.companyJobs]
-    this.filteredJobs = this.companyJobs;
-    this.dataSource  = new MatTableDataSource(this.filteredJobs);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    //console.log("HEY! [" + this.companyJobs + "]");
-  }
+  constructor( private jobDetailsService: JobDetailsService) {  }
 
-  ngOnInit(): void {
-  }
-
-  ngAfterViewInit() {
+  updateJobList(jobs: CompanyJob[]){
+    this.companyJobs = [...this.companyJobs];
+    this.dataSource  = new MatTableDataSource(jobs);
     this.dataSource.sort = this.sort;
     this.dataSource.paginator = this.paginator;
 }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("ngOnChanges!");
+    this.updateJobList(this.companyJobs);
+  }
+
+  ngOnInit(): void {
+    
+  }
+
+  ngAfterViewInit() {
+
+  }
 
   ngOnDestroy() {
     
@@ -71,4 +67,12 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
   clickDetails(job: CompanyJob){
     console.log("JOBCODE: [" + job.CompanyJobCode + "]");
   }
+
+  public filterHandler(filtered: CompanyJob[]){
+    console.log("filterHandler: " + (filtered ));
+    this.filteredJobs = [...filtered];
+    this.updateJobList(this.filteredJobs);
+  }
+
+
 }

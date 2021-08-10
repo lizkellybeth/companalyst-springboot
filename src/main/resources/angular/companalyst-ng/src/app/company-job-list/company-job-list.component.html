@@ -1,4 +1,10 @@
 
+<app-search-filter 
+[companyJobs]=companyJobs 
+[displayedColumns]=displayedColumns 
+(filterChanged)="filterHandler($event)">
+</app-search-filter>
+
 
 <div id='divJobListExpandable'  class="mat-elevation-z6">
   <table mat-table [dataSource]="dataSource" matSort multiTemplateDataRows>

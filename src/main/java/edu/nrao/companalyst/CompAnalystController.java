@@ -76,7 +76,7 @@ public class CompAnalystController {
 	}
 
     @RequestMapping(value = "/getapitoken", produces = { "application/json" })
-    public String getApiToken() {
+    public synchronized String getApiToken() {
         try {
             HttpClient client = HttpClientBuilder.create().build();
             HttpPost post = new HttpPost(COMPURL_GETAPITOKEN);
@@ -111,15 +111,19 @@ public class CompAnalystController {
     @RequestMapping(value = "/companyjob", produces = { "application/json" })
     public String getCompanyJob(@RequestParam(required = true) String jobcode) throws Exception {
     	System.out.println("getCompanyJob() jobcode parameter: [" + jobcode + "]");
-    	String details = CompAnalystController.cache.get(jobcode);
-    	if (details == null) {
+    	String jobDetails = CompAnalystController.cache.get(jobcode);
+    	if (jobDetails == null) {
     		System.out.println("--------========= FETCHING JOB CODE: " + jobcode);
     		jobcode = URLEncoder.encode(jobcode, StandardCharsets.UTF_8);
     		String url = COMPURL_COMPANYJOB +  jobcode;
-    		details = this.getJson(url);
-            CompAnalystController.cache.put(jobcode, details);
+    		jobDetails = this.getJson(url);
+    		System.out.println("jobDetails: " + jobDetails);
+        	if (jobDetails.indexOf("<!DOCTYPE html>") > -1) {
+        		throw new Exception("Problem fetching jobDetails from CompAnalyst API");
+        	}
+            CompAnalystController.cache.put(jobcode, jobDetails);
     	}
-    	return details;
+    	return jobDetails;
     }
     
   //example http://localhost:8080/companyjoblist
@@ -129,12 +133,17 @@ public class CompAnalystController {
     	String companyJobList = CompAnalystController.cache.get("companyJobList");
     	if (companyJobList == null) {
     		companyJobList =  getJson(COMPURL_COMPANYJOBLIST);
+        	System.out.println("companyJobList: " + companyJobList);
+        	if (companyJobList.indexOf("<!DOCTYPE html>") > -1) {
+        		throw new Exception("Problem fetching companyjoblist from CompAnalyst API");
+        	}
     		CompAnalystController.cache.put("companyJobList", companyJobList);
     	}	
+    	System.out.println("companyjoblist 2: " + companyJobList);
         return companyJobList;
     }
     
-    private String getJson(String url) throws Exception {
+    private synchronized String getJson(String url) throws Exception {
     	System.out.println("OUTGOING URL: " + url);
     	HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = new HttpGet(url);
@@ -145,43 +154,6 @@ public class CompAnalystController {
         String result = EntityUtils.toString(response.getEntity());
         return result;
     }
-    
-    private String post(String url) throws Exception {
-    	HttpClient client = HttpClientBuilder.create().build();
-        HttpPost post = new HttpPost(url);
-        post.setHeader("Content-Type", "application/json");
-        checkApiAuthentication();
-        post.addHeader("token", authToken);
-        HashMap<String, String> map = buildCompensationJobListParameterMap();
-        JSONObject obj = new JSONObject(map);
-        String json = obj.toString();
-        HttpEntity entity = new ByteArrayEntity(json.getBytes("UTF-8"));
-        post.setEntity(entity);
-        HttpResponse response = client.execute(post);
-        String result = EntityUtils.toString(response.getEntity());
-        System.out.println("result: " + result); 	
-        return result;
-    }
-    
-	private HashMap<String, String> buildCompensationJobListParameterMap() {
-			HashMap<String, String> map = new HashMap<String, String>();
-			map.put("JobKeyword", "Job Keyword");	
-			/**
-			map.put("LCID", null);	
-			map.put("JobDesc", null);	
-			map.put("CountryCode", null);	
-			map.put("EducationKeyword", null);	
-			map.put("LicenseKeyword", null);	
-			map.put("CertificateKeyword", null);	
-			map.put("ReportToKeyword", null);	
-			map.put("YOEMin", null);	
-			map.put("YOEMax", null);	
-			map.put("Location", null);	
-			map.put("FTESize", null);	
-			map.put("Industry", null);	
-		*/
-			return map;
-	}
     
 	private void checkApiAuthentication() {
         Date currDate = new Date();

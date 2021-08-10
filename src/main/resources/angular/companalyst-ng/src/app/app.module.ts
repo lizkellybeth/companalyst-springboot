@@ -17,17 +17,17 @@ import { MatSelectModule } from '@angular/material/select';
 import {MatMenuModule} from '@angular/material/menu';
 import {MatTabsModule} from '@angular/material/tabs';
 import { CompanyJobComponent } from './company-job/company-job.component';
-import { FilterChipsComponent } from './filter-chips/filter-chips.component';
 
 import {MatChipsModule} from '@angular/material/chips';
 import {MatCardModule} from '@angular/material/card';
+import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CompanyJobListComponent,
     CompanyJobComponent,
-    FilterChipsComponent
+    SearchFilterComponent
   ],
   imports: [
     BrowserModule,
