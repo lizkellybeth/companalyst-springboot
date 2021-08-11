@@ -21,6 +21,7 @@ import { CompanyJobComponent } from './company-job/company-job.component';
 import {MatChipsModule} from '@angular/material/chips';
 import {MatCardModule} from '@angular/material/card';
 import { SearchFilterComponent } from './search-filter/search-filter.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { SearchFilterComponent } from './search-filter/search-filter.component';
     MatMenuModule,
     MatTabsModule,
     MatChipsModule,
-    MatCardModule
+    MatCardModule,
+    MatCheckboxModule
   ],
   providers: [],
   bootstrap: [AppComponent]

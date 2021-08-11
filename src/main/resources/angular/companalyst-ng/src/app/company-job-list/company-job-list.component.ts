@@ -6,10 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { FormBuilder } from '@angular/forms';
-import { JobDetails } from '../job-details';
-import { ChangeDetectionStrategy } from '@angular/core';
-import { CdkRow } from '@angular/cdk/table';
+import { SelectionModel } from '@angular/cdk/collections';
 
 
 @Component({
@@ -31,7 +28,9 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
   filteredJobs: CompanyJob[];
 
   dataSource: MatTableDataSource<CompanyJob> = new MatTableDataSource(this.companyJobs);
-  displayedColumns: string[] = ['JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobLevel', 'JobFLSAStatusDesc'];
+  selection = new SelectionModel<CompanyJob>(true, []);
+  #displayedColumns: string[] = ['select', 'Position', 'JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
+  displayedColumns: string[] = ['select', 'JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
 
   expandedElement: CompanyJob | null;
 
@@ -74,5 +73,22 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
     this.updateJobList(this.filteredJobs);
   }
 
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
 
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+        this.selection.clear() :
+        this.dataSource.data.forEach(row => this.selection.select(row));
+  }
 }
+
+
+/**
+ * https://stackblitz.com/angular/lrpjroljdly?file=app%2Ftable-selection-example.ts
+ */

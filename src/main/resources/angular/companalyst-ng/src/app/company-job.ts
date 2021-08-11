@@ -13,5 +13,7 @@ export interface CompanyJob {
     LastApprovedDate: string
 
     Details: JobDetails
-
+    
+    Position: number
+    Selected: boolean
 }

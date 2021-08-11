@@ -29,6 +29,12 @@ export class AppComponent implements OnInit, AfterViewInit{
       .then(res => {
         console.log("fetched result: " + (res ));
         this.companyJobs = res as CompanyJob[];
+        var ct: number = 0;
+        for (let job of this.companyJobs){
+          job.Selected = false;
+          job.Position = ct;
+          ct++;
+        }
       })
       .catch(err => {
         console.error(err);

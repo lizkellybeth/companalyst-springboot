@@ -52,10 +52,12 @@ export class SearchFilterComponent implements OnInit {
         }
         else {// no filter, check every field ...
           for (var column of this.displayedColumns) {
-            var col = String(job[column]);
-            if ((job[column]) && (col.includes(searchText))) {
-              if (!this.filteredJobs.includes(job)) {
-                this.filteredJobs.push(job)
+            if (column != 'select'){
+              var col = String(job[column]);
+              if ((job[column]) && (col.includes(searchText))) {
+                if (!this.filteredJobs.includes(job)) {
+                  this.filteredJobs.push(job)
+                }
               }
             }
           }
