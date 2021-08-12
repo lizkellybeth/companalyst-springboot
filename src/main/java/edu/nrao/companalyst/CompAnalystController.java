@@ -109,19 +109,19 @@ public class CompAnalystController {
 
     //example http://localhost:8080/companyjob?jobcode=FN5502
     @RequestMapping(value = "/companyjob", produces = { "application/json" })
-    public String getCompanyJob(@RequestParam(required = true) String jobcode) throws Exception {
-    	System.out.println("getCompanyJob() jobcode parameter: [" + jobcode + "]");
-    	String jobDetails = CompAnalystController.cache.get(jobcode);
+    public String getCompanyJob(@RequestParam(required = true) String jdmJobDescHistoryID) throws Exception {
+    	System.out.println("getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
+    	String jobDetails = CompAnalystController.cache.get(jdmJobDescHistoryID);
     	if (jobDetails == null) {
-    		System.out.println("--------========= FETCHING JOB CODE: " + jobcode);
-    		jobcode = URLEncoder.encode(jobcode, StandardCharsets.UTF_8);
-    		String url = COMPURL_COMPANYJOB +  jobcode;
+    		System.out.println("--------========= FETCHING JOB CODE: " + jdmJobDescHistoryID);
+    		jdmJobDescHistoryID = URLEncoder.encode(jdmJobDescHistoryID, StandardCharsets.UTF_8);
+    		String url = COMPURL_COMPANYJOB +  jdmJobDescHistoryID;
     		jobDetails = this.getJson(url);
     		System.out.println("jobDetails: " + jobDetails);
         	if (jobDetails.indexOf("<!DOCTYPE html>") > -1) {
         		throw new Exception("Problem fetching jobDetails from CompAnalyst API");
         	}
-            CompAnalystController.cache.put(jobcode, jobDetails);
+            CompAnalystController.cache.put(jdmJobDescHistoryID, jobDetails);
     	}
     	return jobDetails;
     }
