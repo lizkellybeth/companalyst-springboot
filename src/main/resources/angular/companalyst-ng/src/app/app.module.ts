@@ -22,13 +22,16 @@ import {MatChipsModule} from '@angular/material/chips';
 import {MatCardModule} from '@angular/material/card';
 import { SearchFilterComponent } from './search-filter/search-filter.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { JobDetailsListComponent } from './job-details-list/job-details-list.component';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
     AppComponent,
     CompanyJobListComponent,
     CompanyJobComponent,
-    SearchFilterComponent
+    SearchFilterComponent,
+    JobDetailsListComponent
   ],
   imports: [
     BrowserModule,
@@ -45,7 +48,8 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     MatTabsModule,
     MatChipsModule,
     MatCardModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatExpansionModule
   ],
   providers: [],
   bootstrap: [AppComponent]

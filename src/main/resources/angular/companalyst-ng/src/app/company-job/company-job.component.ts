@@ -15,8 +15,8 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
   jobDetails: JobDetails;
 
   constructor(private jobDetailsService: JobDetailsService) { }
+
   ngAfterViewInit(): void {
-    
   }
 
   ngOnInit(): void {
@@ -27,7 +27,7 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
     console.log("CompanyJobComponent fetchJobDetails! " + jdmJobDescHistoryID)
     this.jobDetailsService.fetchJobDetails(jdmJobDescHistoryID)
       .then(res => {
-        console.log("fetched result: " + (res ));
+        console.log("fetched result: " + (res));
         var details: JobDetails = res as JobDetails;
         console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
         this.jobDetails = details;
@@ -36,7 +36,7 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
         console.error(err);
       });
   }
-  
+
 
 
 }

@@ -27,10 +27,6 @@ tr.example-element-row:not(.example-expanded-row):active {
   padding: 16px;
 }
 
-#divJobListExpandable{
-  padding: 16px;
-}
-
 #divJobSearch{
   padding-left: 15px;
   padding-right: 15px;
@@ -96,15 +92,6 @@ tr.example-element-row:not(.example-expanded-row):active {
   border-radius: 10px;
 }
 
-#divJobListExpandable {
-  border-style: solid;
-  border-width: 0px;
-  margin-left: 15px;
-  margin-right: 15px;
-  margin-top: 15px;
-  border-radius: 10px;
-}
-
 .mat-form-field-appearance-legacy .mat-form-field-wrapper .mat-form-field-wrapper .ng-tns-c82-1 {
   padding-bottom: 0px;
 }
@@ -140,7 +127,28 @@ h5 {
 }
 
 #divJobListExpandable {
+  border-style: solid;
+  border-width: 0px;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
   width: 45%;
-
+  display: inline-block;
+  vertical-align: top;
+  padding: 16px;
 }
+
+app-search-filter {
+  width: 45%;
+}
+
+#jobDetailsList {
+   display: inline-block;
+    width: 45%;
+    display: inline-block;
+    vertical-align: top;
+
+  }
+
 

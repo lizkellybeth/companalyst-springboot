@@ -1,0 +1,13 @@
+
+#jobDetailsDiv {
+    width: 100%;
+    display: inline-block;
+  }
+
+app-company-job {
+  width: 100%;
+}
+
+.tblSelectedJobDetails {
+  width: 100%;
+}

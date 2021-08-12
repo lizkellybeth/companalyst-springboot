@@ -1,0 +1,11 @@
+<div id="jobDetailsDiv" >
+
+    <table class="tblSelectedJobDetails" *ngFor="let jobId of selectedDetailIDs">
+      <tr>
+        <td>
+          <app-company-job [jdmJobDescHistoryID]=jobId></app-company-job>
+        </td>
+      </tr>
+    </table>
+
+</div>
