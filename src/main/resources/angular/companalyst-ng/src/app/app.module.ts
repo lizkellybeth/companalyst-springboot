@@ -25,6 +25,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import { JobDetailsListComponent } from './job-details-list/job-details-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';
 
+
 @NgModule({
   declarations: [
     AppComponent,

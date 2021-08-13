@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-company-job-list',
@@ -23,6 +24,7 @@ import { SelectionModel } from '@angular/cdk/collections';
 export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() companyJobs!: CompanyJob[];
+  @Input() jobFamilies!: string[];
   filteredJobs: CompanyJob[];
   selectedDetailIDs: string[] = [];
 
@@ -36,6 +38,39 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private jobDetailsService: JobDetailsService) { }
+
+  public filterHandler(filtered: CompanyJob[]) {
+    //console.log("filterHandler: " + (filtered));
+    this.filteredJobs = filtered;
+    if (filtered.length === 0){
+      this.clearSelections();
+    }
+    this.updateJobList(this.filteredJobs);
+  }
+
+  onNgModelChange(e) { // here e is a boolean, true if checked, otherwise false
+    this.selectedDetailIDs = [];
+    console.log("onNgModelChange()..." + String(e));
+    console.log("selected: " + this.selection.selected.length);
+    for (var idx of this.selection.selected.keys()) {
+      var obj = this.selection.selected[idx];
+      var job = obj as CompanyJob;
+      var jobId = job.JDMJobDescHistoryID;
+      console.log("key: " + String(idx) + "   value: " + job.JDMJobDescHistoryID);
+      this.selectedDetailIDs.push(jobId);
+    }
+    return true;
+  }
+
+  onClick(evt: Event){
+    var e = evt.target as HTMLInputElement;
+    console.log("click! " + e);
+  }
+
+  clearSelections(){
+    this.selectedDetailIDs = [];
+    this.selection.clear();
+  }
 
   updateJobList(jobs: CompanyJob[]) {
     this.companyJobs = [...this.companyJobs];
@@ -65,23 +100,7 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
     console.log("JOBCODE: [" + job.CompanyJobCode + "]");
   }
 
-  public filterHandler(filtered: CompanyJob[]) {
-    console.log("filterHandler: " + (filtered));
-    this.filteredJobs = filtered;
-    this.updateJobList(this.filteredJobs);
+  onChangeEventFunc(s , evt:MatCheckboxChange){
+    console.log("onChangeEventFunc: " + s + "--- " + evt.checked)
   }
-
-  onNgModelChange(e) { // here e is a boolean, true if checked, otherwise false
-    this.selectedDetailIDs = [];
-    console.log("onNgModelChange()..." + String(e));
-    console.log(this.selection.selected.length);
-    for (var idx of this.selection.selected.keys()) {
-      var obj = this.selection.selected[idx];
-      var job = obj as CompanyJob;
-      var jobId = job.JDMJobDescHistoryID;
-      console.log("key: " + String(idx) + "   value: " + job.JDMJobDescHistoryID);
-      this.selectedDetailIDs.push(jobId);
-    }
-  }
-
 }

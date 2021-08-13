@@ -13,6 +13,7 @@ export class AppComponent implements OnInit, AfterViewInit{
 
   title = 'companalyst-ng';
   companyJobs: CompanyJob[] = [];
+  jobFamilies: string[] = [];
 
   constructor(private jobListService: CompanyJobListService) { }
 
@@ -33,6 +34,10 @@ export class AppComponent implements OnInit, AfterViewInit{
         for (let job of this.companyJobs){
           job.Selected = false;
           job.Position = ct;
+          var jobFam = job.JobFamily;
+          if (!this.jobFamilies.includes(jobFam) && jobFam != null){
+            this.jobFamilies.push(jobFam);
+          }
           ct++;
         }
       })
