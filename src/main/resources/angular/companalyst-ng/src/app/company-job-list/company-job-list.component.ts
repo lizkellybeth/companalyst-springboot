@@ -1,5 +1,5 @@
 import { JobDetailsService } from './../job-details.service';
-import { Component, OnInit, ViewChild, AfterViewInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CompanyJob } from '../company-job';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+
 
 @Component({
   selector: 'app-company-job-list',
@@ -21,7 +22,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
   ],
 })
 
-export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges {
+export class CompanyJobListComponent implements OnInit, OnChanges {
 
   @Input() companyJobs!: CompanyJob[];
   @Input() jobFamilies!: string[];
@@ -29,7 +30,7 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
   selectedDetailIDs: string[] = [];
 
   dataSource: MatTableDataSource<CompanyJob> = new MatTableDataSource(this.companyJobs);
-  selection = new SelectionModel<CompanyJob>(true, []);
+  selection: SelectionModel<CompanyJob> = new SelectionModel<CompanyJob>(true, []);
   displayedColumns: string[] = ['select', 'JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
 
   expandedElement: CompanyJob | null;
@@ -39,16 +40,38 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
 
   constructor(private jobDetailsService: JobDetailsService) { }
 
+  onChangeEventFunc(row, evt: MatCheckboxChange) {
+    var checked = evt.checked;
+    var jobId = row.JDMJobDescHistoryID;
+    if (checked === true) {
+      if (this.selectedDetailIDs.indexOf(jobId) < 0) {
+        this.selectedDetailIDs.push(jobId);
+      } else {
+        //jobid already in list
+      }
+    } else {
+      var temp: string[] = [];
+      for (var id of this.selectedDetailIDs) {
+        if (id !== jobId) {// add all jobIds to temp array except the one being unselected
+          temp.push(id);
+        } else {
+          //dont add jobid being unselected
+        }
+      }
+      this.selectedDetailIDs = [...temp];
+    }
+  }
+
   public filterHandler(filtered: CompanyJob[]) {
     //console.log("filterHandler: " + (filtered));
     this.filteredJobs = filtered;
-    if (filtered.length === 0){
+    if (filtered.length === 0) {
       this.clearSelections();
     }
     this.updateJobList(this.filteredJobs);
   }
 
-  onNgModelChange(e) { // here e is a boolean, true if checked, otherwise false
+  onNgModelChange(e) {
     this.selectedDetailIDs = [];
     console.log("onNgModelChange()..." + String(e));
     console.log("selected: " + this.selection.selected.length);
@@ -62,14 +85,10 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
     return true;
   }
 
-  onClick(evt: Event){
-    var e = evt.target as HTMLInputElement;
-    console.log("click! " + e);
-  }
-
-  clearSelections(){
+  clearSelections() {
     this.selectedDetailIDs = [];
     this.selection.clear();
+    this.dataSource.data.forEach(row => this.selection.deselect(row));
   }
 
   updateJobList(jobs: CompanyJob[]) {
@@ -80,7 +99,6 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("ngOnChanges!");
     this.updateJobList(this.companyJobs);
   }
 
@@ -88,19 +106,20 @@ export class CompanyJobListComponent implements OnInit, AfterViewInit, OnChanges
 
   }
 
-  ngAfterViewInit() {
-
+  /** Whether the number of selected elements matches the total number of rows. 
+   * https://material.angular.io/components/table/overview#selection
+  */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected == numRows;
   }
 
-  ngOnDestroy() {
-
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
-  clickDetails(job: CompanyJob) {
-    console.log("JOBCODE: [" + job.CompanyJobCode + "]");
-  }
-
-  onChangeEventFunc(s , evt:MatCheckboxChange){
-    console.log("onChangeEventFunc: " + s + "--- " + evt.checked)
-  }
 }

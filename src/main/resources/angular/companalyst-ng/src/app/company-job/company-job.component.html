@@ -1,14 +1,18 @@
 <div class="jobdetailscard mat-table cdk-table mat-elevation-z8 ng-tns-c138-0">
 
-  <mat-accordion class="example-card" *ngIf="jobDetails != null">
+  <mat-accordion class="example-card">
     <mat-expansion-panel hideToggle>
 
-      <mat-expansion-panel-header>
-        <mat-panel-title *ngIf="jobDetails != null">
+      <mat-expansion-panel-header *ngIf="jobDetails != null; else fetching">
+        <mat-panel-title>
           {{jobDetails.CompanyJobTitle}}
         </mat-panel-title>
       </mat-expansion-panel-header>
-
+      <ng-template #fetching>
+        <mat-panel-title>
+          fetching...
+        </mat-panel-title>
+      </ng-template>
 
       <table id="tblJobDetails" *ngIf="jobDetails != null">
         <tr *ngIf="jobDetails.CompanyJobTitle != null && jobDetails.CompanyJobTitle != '' ">
