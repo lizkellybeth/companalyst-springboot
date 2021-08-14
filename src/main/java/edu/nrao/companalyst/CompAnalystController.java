@@ -156,12 +156,12 @@ public class CompAnalystController {
     }
     
 	private void checkApiAuthentication() {
-        Date currDate = new Date();
-        if ((authToken == null) || (expireDate == null) || (currDate.after(expireDate))) {
-        	expireDate = null;
-        	authToken = null;
+        //Date currDate = new Date();
+        //if ((authToken == null) || (expireDate == null) || (currDate.after(expireDate))) {
+        //	expireDate = null;
+        //	authToken = null;
         	getApiToken();
-        }
+        //}
 	}
 
 } 
