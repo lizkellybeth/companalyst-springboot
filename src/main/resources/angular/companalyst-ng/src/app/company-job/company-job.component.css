@@ -1,7 +1,9 @@
-#tblJobDetails, #tblUserDefinedFields {
+#tblJobDetails {
     width: 95%;
     text-align: left;
     margin: auto;
+    table-layout: fixed;
+    word-wrap: break-word;
 }
 
 #tblJobDetails td , #tblUserDefinedFields  td {
@@ -43,9 +45,13 @@ mat-card {
     margin-right: 15px;
     margin-top: 15px;
     border-radius: 10px;
-    width: 100%;
     display: inline-block;
     vertical-align: top;
     padding: 16px;
 }
 
+
+.jobDetailsHeader {
+    width: 30%;
+    padding: 5px;
+}

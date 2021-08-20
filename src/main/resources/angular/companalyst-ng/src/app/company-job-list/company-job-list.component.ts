@@ -31,7 +31,8 @@ export class CompanyJobListComponent implements OnInit, OnChanges {
 
   dataSource: MatTableDataSource<CompanyJob> = new MatTableDataSource(this.companyJobs);
   selection: SelectionModel<CompanyJob> = new SelectionModel<CompanyJob>(true, []);
-  displayedColumns: string[] = ['select', 'JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
+  //displayedColumns: string[] = ['select', 'JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
+  displayedColumns: string[] = ['select', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
 
   expandedElement: CompanyJob | null;
 

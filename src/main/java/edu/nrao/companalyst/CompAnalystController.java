@@ -27,6 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.nrao.companalyst.data.CompanyJobDetails;
+import edu.nrao.companalyst.data.JsonUtil;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -107,7 +110,7 @@ public class CompAnalystController {
         }
     }
 
-    //example http://localhost:8080/companyjob?jobcode=FN5502
+    //example http://localhost:10001/companyjob?jdmJobDescHistoryID=2877
     @RequestMapping(value = "/companyjob", produces = { "application/json" })
     public String getCompanyJob(@RequestParam(required = true) String jdmJobDescHistoryID) throws Exception {
     	System.out.println("getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
@@ -123,10 +126,11 @@ public class CompAnalystController {
         	}
             CompAnalystController.cache.put(jdmJobDescHistoryID, jobDetails);
     	}
+    	jobDetails = JsonUtil.replaceSpacesInKeys(jobDetails);
     	return jobDetails;
     }
     
-  //example http://localhost:8080/companyjoblist
+  //example http://localhost:10001/companyjoblist
     @RequestMapping(value = "/companyjoblist", produces = { "application/json" })
     public String getCompanyJobList() throws Exception {
     	System.out.println("companyjoblist");
@@ -139,7 +143,6 @@ public class CompAnalystController {
         	}
     		CompAnalystController.cache.put("companyJobList", companyJobList);
     	}	
-    	System.out.println("companyjoblist 2: " + companyJobList);
         return companyJobList;
     }
     
@@ -152,6 +155,7 @@ public class CompAnalystController {
         get.addHeader("token", authToken);
         HttpResponse response = client.execute(get);
         String result = EntityUtils.toString(response.getEntity());
+        System.out.println("getJson result: " + result);
         return result;
     }
     

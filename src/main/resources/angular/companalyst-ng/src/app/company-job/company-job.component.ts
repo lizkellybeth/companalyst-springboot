@@ -13,6 +13,7 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
 
   @Input() jdmJobDescHistoryID: string;
   jobDetails: JobDetails;
+  keys: string[] = [];
 
   constructor(private jobDetailsService: JobDetailsService) { }
 
@@ -31,6 +32,11 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
         var details: JobDetails = res as JobDetails;
         console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
         this.jobDetails = details;
+        for (let key in details){
+          //key = key.split("_").join(" ");
+          console.log("key: " + key);
+          this.keys.push(key);
+        }
       })
       .catch(err => {
         console.error(err);

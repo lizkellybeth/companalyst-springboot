@@ -23,11 +23,12 @@
     </td>
   </ng-container>
   
+  <!--
     <ng-container matColumnDef="JDMJobDescHistoryID">
       <th mat-header-cell *matHeaderCellDef> ID </th>
       <td mat-cell *matCellDef="let element"> {{element.JDMJobDescHistoryID}} </td>
     </ng-container>
-
+  -->
     <ng-container matColumnDef="CompanyJobCode">
       <th mat-header-cell *matHeaderCellDef> Job Code </th>
       <td mat-cell *matCellDef="let element"> {{element.CompanyJobCode}} </td>
@@ -49,8 +50,12 @@
     </ng-container>
   
    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+   <!--
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"
         (click)="selection.toggle(row)">
+    </tr>
+  -->
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;">
     </tr>
   </table>
 
