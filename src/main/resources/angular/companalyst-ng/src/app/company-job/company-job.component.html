@@ -5,7 +5,7 @@
 
       <mat-expansion-panel-header *ngIf="jobDetails != null; else fetching">
         <mat-panel-title>
-          {{jobDetails.CompanyJobTitle}} [click for details]
+          {{jobDetails.CompanyJobTitle}} <span id='txtToggle'>Click to Toggle...</span>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template #fetching>
@@ -14,13 +14,12 @@
         </mat-panel-title>
       </ng-template>
 
-      <table id="tblJobDetails">
-        <tr class="jobDetailsRow" *ngFor="let key of keys;">
-          <th class="jobDetailsHeader">{{key.split("_").join(" ")}}</th>
+      <table id="tblJobDetails" *ngIf="jobDetails != null">
+        <tr class="jobDetailsRow" *ngFor="let key of fieldsToShow;">
+          <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
           <td class="jobDetailsCell">{{jobDetails[key]}}</td>
         </tr>
-
-        </table>
+      </table>
 
       <!--
       <table id="tblJobDetails" *ngIf="jobDetails != null">

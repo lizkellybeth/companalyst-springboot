@@ -13,7 +13,26 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
 
   @Input() jdmJobDescHistoryID: string;
   jobDetails: JobDetails;
-  keys: string[] = [];
+  //keys: string[] = [];
+  fieldsToShow: string[] = [
+    "CompanyJobCode", 
+    "CompanyJobTitle",
+    "CompanyJobSummary", 
+    "UDF_FLSA_Classification", 
+    "UDF_Pay_Grade", 
+    "UDF_Large_Functional_Group", 
+    "UDF_Job_Family", 
+    "UDF_Minimum_Education_Requirement", 
+    "UDF_Minimum_Experience_Requirement", 
+    "UDF_Position_Designation", 
+    "UDF_Locations_applicable_to_Safety_Sensitive_for_this_position", 
+    "UDF_Essential_Duties_and_Responsibilities", 
+    "UDF_Education_Detail", 
+    "UDF_Experience_Detail", 
+    "UDF_Qualifications_and_Competencies", 
+    "UDF_Nature_of_Work", 
+    "UDF_Physical_Requirements"
+  ];
 
   constructor(private jobDetailsService: JobDetailsService) { }
 
@@ -32,11 +51,15 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
         var details: JobDetails = res as JobDetails;
         console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
         this.jobDetails = details;
+        /*
         for (let key in details){
           //key = key.split("_").join(" ");
           console.log("key: " + key);
-          this.keys.push(key);
+          if (this.fieldsToShow.indexOf(key) > -1){
+            this.keys.push(key);
+          }
         }
+        */
       })
       .catch(err => {
         console.error(err);
