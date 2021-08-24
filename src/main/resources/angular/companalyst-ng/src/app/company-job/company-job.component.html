@@ -5,7 +5,7 @@
 
       <mat-expansion-panel-header *ngIf="jobDetails != null; else fetching">
         <mat-panel-title>
-          {{jobDetails.CompanyJobTitle}} <span id='txtToggle'>Click to Toggle...</span>
+          {{jobDetails.CompanyJobTitle}} <span class="jobDetailsHeader" [ngClass]="expanded?'expandIcon':'collapseIcon'" (click)='toggleIcon()'></span>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template #fetching>

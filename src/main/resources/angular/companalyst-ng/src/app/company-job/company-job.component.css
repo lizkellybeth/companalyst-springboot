@@ -56,6 +56,16 @@ mat-card {
     padding: 5px;
 }
 
-#txtToggle {
-    float: right;
+.jobDetailsHeader {
+    background-size: initial;
+    background-repeat: no-repeat;
+    min-width: 24px;
+}
+
+.expandIcon {
+    background-image: url('/assets/expand-sm.png');
+}
+
+.collapseIcon {
+    background-image: url('/assets/collapse-sm.png');
 }

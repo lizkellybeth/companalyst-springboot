@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
+import { $ } from 'protractor';
 import { CompanyJob } from '../company-job';
 import { JobDetails } from '../job-details';
 import { JobDetailsService } from '../job-details.service';
@@ -10,6 +11,8 @@ import { JobDetailsService } from '../job-details.service';
   styleUrls: ['./company-job.component.css']
 })
 export class CompanyJobComponent implements OnInit, AfterViewInit {
+
+  expanded: boolean = false;
 
   @Input() jdmJobDescHistoryID: string;
   jobDetails: JobDetails;
@@ -66,6 +69,9 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
       });
   }
 
-
+  toggleIcon(){
+    console.log('toggle!');
+    this.expanded = !this.expanded;
+  }
 
 }

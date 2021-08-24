@@ -133,7 +133,7 @@ h5 {
   margin-right: 15px;
   margin-top: 15px;
   border-radius: 10px;
-  width: 45%;
+  width: 38%;
   display: inline-block;
   vertical-align: top;
   padding: 16px;
@@ -145,7 +145,7 @@ app-search-filter {
 
 #jobDetailsList {
    display: inline-block;
-    width: 48%;
+    width: 58%;
     display: inline-block;
     vertical-align: top;
 
