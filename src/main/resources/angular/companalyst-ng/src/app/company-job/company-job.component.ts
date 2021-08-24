@@ -1,7 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { $ } from 'protractor';
-import { CompanyJob } from '../company-job';
+import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { JobDetails } from '../job-details';
 import { JobDetailsService } from '../job-details.service';
 
@@ -54,15 +51,6 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
         var details: JobDetails = res as JobDetails;
         console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
         this.jobDetails = details;
-        /*
-        for (let key in details){
-          //key = key.split("_").join(" ");
-          console.log("key: " + key);
-          if (this.fieldsToShow.indexOf(key) > -1){
-            this.keys.push(key);
-          }
-        }
-        */
       })
       .catch(err => {
         console.error(err);

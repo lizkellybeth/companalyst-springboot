@@ -1,5 +1,5 @@
 import { JobDetailsService } from './../job-details.service';
-import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges, AfterViewInit } from '@angular/core';
 import { CompanyJob } from '../company-job';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,7 +22,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
   ],
 })
 
-export class CompanyJobListComponent implements OnInit, OnChanges {
+export class CompanyJobListComponent implements AfterViewInit, OnChanges {
 
   @Input() companyJobs!: CompanyJob[];
   @Input() jobFamilies!: string[];
@@ -95,16 +95,16 @@ export class CompanyJobListComponent implements OnInit, OnChanges {
   updateJobList(jobs: CompanyJob[]) {
     this.companyJobs = [...this.companyJobs];
     this.dataSource = new MatTableDataSource(jobs);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-  }
+     this.dataSource.paginator = this.paginator;
+     this.dataSource.sort = this.sort;
+    }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.updateJobList(this.companyJobs);
   }
 
-  ngOnInit(): void {
-
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   /** Whether the number of selected elements matches the total number of rows. 

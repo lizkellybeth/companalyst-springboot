@@ -1,11 +1,11 @@
 <div class="jobdetailscard mat-table cdk-table mat-elevation-z8 ng-tns-c138-0">
 
   <mat-accordion class="example-card">
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle  (click)='toggleIcon()'>
 
       <mat-expansion-panel-header *ngIf="jobDetails != null; else fetching">
         <mat-panel-title>
-          {{jobDetails.CompanyJobTitle}} <span class="jobDetailsHeader" [ngClass]="expanded?'expandIcon':'collapseIcon'" (click)='toggleIcon()'></span>
+          {{jobDetails.CompanyJobTitle}} <span class="jobDetailsHeader" [ngClass]="expanded?'collapseIcon':'expandIcon'"></span>
         </mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template #fetching>

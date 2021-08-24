@@ -133,22 +133,32 @@ h5 {
   margin-right: 15px;
   margin-top: 15px;
   border-radius: 10px;
-  width: 38%;
+  width: 40%;
   display: inline-block;
   vertical-align: top;
   padding: 16px;
 }
 
 app-search-filter {
-  width: 45%;
+  width: 43%;
 }
 
 #jobDetailsList {
    display: inline-block;
-    width: 58%;
+    width: 53%;
     display: inline-block;
     vertical-align: top;
+}
 
-  }
+.mat-table {
+  table-layout:fixed;
+}
+
+.tableCell10 {
+  width: 10%;
+}
 
 
+.tableCell25 {
+  width: 25%;
+}
