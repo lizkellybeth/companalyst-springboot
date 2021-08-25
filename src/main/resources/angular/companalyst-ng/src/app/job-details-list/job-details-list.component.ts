@@ -20,7 +20,7 @@ export class JobDetailsListComponent implements OnInit, AfterViewInit, OnChanges
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("JobDetailsListComponent -> ngOnChanges! " + this.jobDetailsList.length);
+    //console.log("JobDetailsListComponent -> ngOnChanges! " + this.jobDetailsList.length);
     this.dataSource = new MatTableDataSource(this.jobDetailsList);
 }
 

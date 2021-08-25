@@ -65,24 +65,25 @@ export class CompanyJobListComponent implements AfterViewInit, OnChanges {
 
   public filterHandler(filtered: CompanyJob[]) {
     //console.log("filterHandler: " + (filtered));
-    this.filteredJobs = filtered;
+    this.filteredJobs = [...filtered];
     if (filtered.length === 0) {
       this.clearSelections();
     }
-    this.updateJobList(this.filteredJobs);
+    //this.updateJobList(this.filteredJobs);
+    this.companyJobs = [...this.companyJobs];
+    if (this.filteredJobs.length > 0){
+      this.dataSource = new MatTableDataSource(this.filteredJobs);
+    } else {
+      this.dataSource = new MatTableDataSource(this.companyJobs);
+    }
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+
   }
 
   onNgModelChange(e) {
-    this.selectedDetailIDs = [];
-    console.log("onNgModelChange()..." + String(e));
-    console.log("selected: " + this.selection.selected.length);
-    for (var idx of this.selection.selected.keys()) {
-      var obj = this.selection.selected[idx];
-      var job = obj as CompanyJob;
-      var jobId = job.JDMJobDescHistoryID;
-      console.log("key: " + String(idx) + "   value: " + job.JDMJobDescHistoryID);
-      this.selectedDetailIDs.push(jobId);
-    }
+    console.log("DEEEEBUG ####### onNgModelChange()..." + String(e));
+    this.updateJobList();
     return true;
   }
 
@@ -92,19 +93,32 @@ export class CompanyJobListComponent implements AfterViewInit, OnChanges {
     this.dataSource.data.forEach(row => this.selection.deselect(row));
   }
 
-  updateJobList(jobs: CompanyJob[]) {
-    this.companyJobs = [...this.companyJobs];
-    this.dataSource = new MatTableDataSource(jobs);
-     this.dataSource.paginator = this.paginator;
-     this.dataSource.sort = this.sort;
-    }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.updateJobList(this.companyJobs);
+  updateJobList() {
+    console.log("##### debug companyjoblist.updateJobList");
+    this.selectedDetailIDs = [];
+    console.log("selected: " + this.selection.selected.length);
+    for (var idx of this.selection.selected.keys()) {
+      var obj = this.selection.selected[idx];
+      var job = obj as CompanyJob;
+      var jobId = job.JDMJobDescHistoryID;
+      console.log("key: " + String(idx) + "   value: " + job.JDMJobDescHistoryID);
+      this.selectedDetailIDs.push(jobId);
+    }
+    this.dataSource  = new MatTableDataSource(this.companyJobs);
+    this.dataSource.sort = this.sort;
   }
 
+
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log("##### debug companyjoblist.ngOnChanges");
+    this.updateJobList();
+
+  }
+
+
   ngAfterViewInit() {
-    this.dataSource.sort = this.sort;
+
   }
 
   /** Whether the number of selected elements matches the total number of rows. 

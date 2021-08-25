@@ -1,10 +1,7 @@
-import { state } from '@angular/animations';
-import { MatTableDataSource } from '@angular/material/table';
 import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges, ViewChildren, ViewChild } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CompanyJob } from '../company-job';
-import { MatChip, MatChipList, MatChipListChange, MatChipSelectionChange } from '@angular/material/chips';
-import { QueryList } from '@angular/core';
+import { MatChip, MatChipList } from '@angular/material/chips';
 
 @Component({
   selector: 'app-search-filter',
@@ -19,6 +16,17 @@ export class SearchFilterComponent implements OnInit, OnChanges {
   @Input() displayedColumns: string[];
   @Input() jobFamilies: string[];
 
+  searchFilterOptionMap: Map<string, string> = new Map<string, string>([
+    ["Select...", ""],
+    ["Job Code", "CompanyJobCode"],
+    ["Job Title", "CompanyJobTitle"],
+    ["Job Family", "JobFamily"],
+    ["FLSA Status", "JobFLSAStatusDesc"],
+    ["Job Description", "CompanyJobDesc"]
+  ]);
+
+  searchFilterOptions: string[] = [];
+
   @Output() filterChanged: EventEmitter<CompanyJob[]> =   new EventEmitter();
   filteredJobs!: CompanyJob[];
 
@@ -28,9 +36,14 @@ export class SearchFilterComponent implements OnInit, OnChanges {
     searchFilter: ['']
   })
   
-  constructor(private formBuilder: FormBuilder) { }
-  ngOnChanges(changes: SimpleChanges): void {}
+  constructor(private formBuilder: FormBuilder) { 
+    var keys = this.searchFilterOptionMap.keys();
+    for (var key of keys) {
+      this.searchFilterOptions.push(key);
+    }
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {}
 
   ngOnInit(): void {
     this.filteredJobs = [...this.companyJobs]
@@ -50,13 +63,13 @@ export class SearchFilterComponent implements OnInit, OnChanges {
   clickSearch() {
     console.log("hey! " + JSON.stringify(this.searchForm.value['searchText']));
     var searchText: string = this.searchForm.value['searchText'];
-    var searchFilter: string = this.searchForm.value['searchFilter'];
+    var searchFilter: string = this.searchFilterOptionMap.get(this.searchForm.value['searchFilter']);
     this.filteredJobs = []
     for (var job of this.companyJobs) {
       if (searchText.length > 0) {
-        if (searchFilter && searchFilter.length > 0 && searchFilter != 'select') {// filter has been selected...
+        if (searchFilter && searchFilter.length > 0) {// filter has been selected...
           var checkField: string = String(job[searchFilter]);
-          if (checkField.includes(searchText)) {
+          if (checkField.toUpperCase().includes(searchText.toUpperCase())) {
             this.filteredJobs.push(job)
           }
         }
@@ -64,7 +77,7 @@ export class SearchFilterComponent implements OnInit, OnChanges {
           for (var column of this.displayedColumns) {
             if (column != 'select'){
               var col = String(job[column]);
-              if ((job[column]) && (col.includes(searchText))) {
+              if ((job[column]) && (col.toUpperCase().includes(searchText.toUpperCase()))) {
                 if (!this.filteredJobs.includes(job)) {
                   this.filteredJobs.push(job)
                 }
@@ -72,18 +85,21 @@ export class SearchFilterComponent implements OnInit, OnChanges {
             }
           }
           //CompanyJobDesc is not included in the table columns
-          if ((job["CompanyJobDesc"]) && (job["CompanyJobDesc"].includes(searchText))) {
-            if (!this.filteredJobs.includes(job)) {
-              this.filteredJobs.push(job)
+          if ((job["CompanyJobDesc"])) {
+            var temp = (job["CompanyJobDesc"]).toUpperCase();
+            if (temp.includes(searchText.toUpperCase())) {
+              if (!this.filteredJobs.includes(job)) {
+                this.filteredJobs.push(job)
+              }
             }
           }
         }
-        this.filteredJobs = [...this.filteredJobs]; //alerts the angular change detection mechanism
     
       } else {
         //no search text, do nothing
       }
     }
+    this.filteredJobs = [...this.filteredJobs]; //alerts the angular change detection mechanism
     this.filterChanged.emit(this.filteredJobs);
   }
 

@@ -12,8 +12,7 @@
         <mat-label>Filter on...</mat-label>
         <select formControlName="searchFilter" matNativeControl>
           <!--<option value="">&nbsp;</option>-->
-          <option value="{{column}}" *ngFor="let column of displayedColumns">{{column}}</option>
-          <option value="CompanyJobDesc">CompanyJobDesc</option>
+          <option value="{{column}}" *ngFor="let column of searchFilterOptions">{{column}}</option>
         </select>
       </mat-form-field>
       <i class="fa fa-filter filterFunnel" aria-hidden="true"></i>
