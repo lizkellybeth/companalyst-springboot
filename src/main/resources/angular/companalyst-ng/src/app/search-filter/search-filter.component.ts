@@ -20,9 +20,9 @@ export class SearchFilterComponent implements OnInit, OnChanges {
     ["Select...", ""],
     ["Job Code", "CompanyJobCode"],
     ["Job Title", "CompanyJobTitle"],
-    ["Job Family", "JobFamily"],
-    ["FLSA Status", "JobFLSAStatusDesc"],
-    ["Job Description", "CompanyJobDesc"]
+    ["Job Family", "UDF_Job_Family"],
+    ["FLSA Status", "UDF_FLSA_Status"],
+    ["Large Functional Group", "UDF_Large_Functional_Group"]
   ]);
 
   searchFilterOptions: string[] = [];
@@ -118,7 +118,7 @@ export class SearchFilterComponent implements OnInit, OnChanges {
         filterArray = [...this.companyJobs];
       }
       for (var job of filterArray) {
-        if (job.JobFamily === chip.value) {
+        if (job.UDF_Job_Family === chip.value) {
           temp.push(job)
         }
       }

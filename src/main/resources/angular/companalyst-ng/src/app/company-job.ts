@@ -4,11 +4,12 @@ export interface CompanyJob {
     JDMJobDescHistoryID: string
     CompanyJobCode: string
     CompanyJobTitle: string
-    JobCategory: string
-    CompanyJobDesc: string
     JobLevel: string
-    JobFamily: string
-    JobFLSAStatusDesc: string
+
+    UDF_Large_Functional_Group: string
+    UDF_Job_Family: string
+    UDF_FLSA_Classification: string
+    
     LastUpdateDate: string
     LastApprovedDate: string
 

@@ -32,7 +32,8 @@ export class CompanyJobListComponent implements AfterViewInit, OnChanges {
   dataSource: MatTableDataSource<CompanyJob> = new MatTableDataSource(this.companyJobs);
   selection: SelectionModel<CompanyJob> = new SelectionModel<CompanyJob>(true, []);
   //displayedColumns: string[] = ['select', 'JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
-  displayedColumns: string[] = ['select', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
+  //displayedColumns: string[] = ['select', 'CompanyJobCode', 'CompanyJobTitle', 'UDF_Large_Functional_Group', 'UDF_Job_Family', 'UDF_FLSA_Classification'];
+  displayedColumns: string[] = ['select', 'CompanyJobCode', 'CompanyJobTitle', 'UDF_Large_Functional_Group', 'UDF_Job_Family'];
 
   expandedElement: CompanyJob | null;
 
