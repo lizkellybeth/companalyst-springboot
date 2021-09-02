@@ -15,6 +15,4 @@ export interface CompanyJob {
 
     Details: JobDetails
     
-    Position: number
-    Selected: boolean
-}
+ }

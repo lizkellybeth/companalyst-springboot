@@ -45,12 +45,7 @@
       <td mat-cell *matCellDef="let element"> {{element.UDF_Job_Family}} </td>
     </ng-container>
 
-    <!--
-    <ng-container matColumnDef="UDF_FLSA_Classification">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class='tableCell10'> FLSA Status  </th>
-      <td mat-cell *matCellDef="let element"> {{element.UDF_FLSA_Classification}} </td>
-    </ng-container>
-  -->
+
   
    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
@@ -58,7 +53,7 @@
     </tr>
   </table>
 
-  <mat-paginator [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons >
+  <mat-paginator [pageSizeOptions]="[15, 25, 50]" showFirstLastButtons >
   </mat-paginator>
 
   <button id="clearSelections"  (click)='clearSelections()'>Clear</button>

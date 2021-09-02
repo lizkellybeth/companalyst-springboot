@@ -114,12 +114,12 @@ export class CompanyJobListComponent implements AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     console.log("##### debug companyjoblist.ngOnChanges");
     this.updateJobList();
-
+    setTimeout(() => this.dataSource.paginator = this.paginator);
   }
 
 
   ngAfterViewInit() {
-
+    this.updateJobList();
   }
 
   /** Whether the number of selected elements matches the total number of rows. 

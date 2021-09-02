@@ -4,11 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +22,9 @@ public class CompanyJobDetails {
 	@Value("${companalyst.db.maxage.minutes}")
 	public static long MAX_AGE;//minutes
 
+	@Column(unique=true) 
 	private String JDMJobDescHistoryID;
+	
 	private String CompanyJobCode;
 	private String CompanyJobTitle;
 	
@@ -52,22 +54,29 @@ public class CompanyJobDetails {
 	private String UDF_Position_Designation;
 	private String UDF_Locations_applicable_to_Safety_Sensitive_for_this_position;
 	
-	@Column(length = 3000) 
+	@Lob 
+	@Column(columnDefinition="BLOB")
 	private String UDF_Essential_Duties_and_Responsibilities;
 	
-	@Column(length = 2000) 
+	
+	@Lob 
+	@Column(columnDefinition="BLOB")
 	private String UDF_Education_Detail;
 	
-	@Column(length = 2000) 
+	@Lob 
+	@Column(columnDefinition="BLOB")
 	private String UDF_Experience_Detail;
 	
-	@Column(length = 2000) 
+	@Lob 
+	@Column(columnDefinition="BLOB")
 	private String UDF_Qualifications_and_Competencies;
 	
-	@Column(length = 2000) 
+	@Lob 
+	@Column(columnDefinition="BLOB")
 	private String UDF_Nature_of_Work;
 	
-	@Column(length = 2000) 
+	@Lob 
+	@Column(columnDefinition="BLOB")
 	private String UDF_Physical_Requirements;
 
 
@@ -164,6 +173,16 @@ public class CompanyJobDetails {
 	    }
 		return false;
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof CompanyJobDetails) {
+			CompanyJobDetails deets = (CompanyJobDetails) obj;
+			if (deets.getJDMJobDescHistoryID().equals(this.JDMJobDescHistoryID)) {
+				return true;
+			}				
+		}
+		return false;
+	}
 
 	public Date getCachedDate() {
 		return cachedDate;
@@ -171,6 +190,223 @@ public class CompanyJobDetails {
 
 	public void setCachedDate(Date cachedDate) {
 		this.cachedDate = cachedDate;
+	}
+
+	public String getJDMJobDescHistoryID() {
+		return JDMJobDescHistoryID;
+	}
+
+	public void setJDMJobDescHistoryID(String jDMJobDescHistoryID) {
+		JDMJobDescHistoryID = jDMJobDescHistoryID;
+	}
+
+	public String getCompanyJobCode() {
+		return CompanyJobCode;
+	}
+
+	public void setCompanyJobCode(String companyJobCode) {
+		CompanyJobCode = companyJobCode;
+	}
+
+	public String getCompanyJobTitle() {
+		return CompanyJobTitle;
+	}
+
+	public void setCompanyJobTitle(String companyJobTitle) {
+		CompanyJobTitle = companyJobTitle;
+	}
+
+	public String getCompanyJobSummary() {
+		return CompanyJobSummary;
+	}
+
+	public void setCompanyJobSummary(String companyJobSummary) {
+		CompanyJobSummary = companyJobSummary;
+	}
+
+	public String getLastApprovedByUName() {
+		return LastApprovedByUName;
+	}
+
+	public void setLastApprovedByUName(String lastApprovedByUName) {
+		LastApprovedByUName = lastApprovedByUName;
+	}
+
+	public String getLastApprovedDate() {
+		return LastApprovedDate;
+	}
+
+	public void setLastApprovedDate(String lastApprovedDate) {
+		LastApprovedDate = lastApprovedDate;
+	}
+
+	public String getLastUpdateByUName() {
+		return LastUpdateByUName;
+	}
+
+	public void setLastUpdateByUName(String lastUpdateByUName) {
+		LastUpdateByUName = lastUpdateByUName;
+	}
+
+	public String getLastUpdateDate() {
+		return LastUpdateDate;
+	}
+
+	public void setLastUpdateDate(String lastUpdateDate) {
+		LastUpdateDate = lastUpdateDate;
+	}
+
+	public String getLastPublishedByUName() {
+		return LastPublishedByUName;
+	}
+
+	public void setLastPublishedByUName(String lastPublishedByUName) {
+		LastPublishedByUName = lastPublishedByUName;
+	}
+
+	public String getLastPublishedDate() {
+		return LastPublishedDate;
+	}
+
+	public void setLastPublishedDate(String lastPublishedDate) {
+		LastPublishedDate = lastPublishedDate;
+	}
+
+	public String getUDF_Organization() {
+		return UDF_Organization;
+	}
+
+	public void setUDF_Organization(String uDF_Organization) {
+		UDF_Organization = uDF_Organization;
+	}
+
+	public String getUDF_Date() {
+		return UDF_Date;
+	}
+
+	public void setUDF_Date(String uDF_Date) {
+		UDF_Date = uDF_Date;
+	}
+
+	public String getUDF_Department() {
+		return UDF_Department;
+	}
+
+	public void setUDF_Department(String uDF_Department) {
+		UDF_Department = uDF_Department;
+	}
+
+	public String getUDF_FLSA_Classification() {
+		return UDF_FLSA_Classification;
+	}
+
+	public void setUDF_FLSA_Classification(String uDF_FLSA_Classification) {
+		UDF_FLSA_Classification = uDF_FLSA_Classification;
+	}
+
+	public String getUDF_Pay_Grade() {
+		return UDF_Pay_Grade;
+	}
+
+	public void setUDF_Pay_Grade(String uDF_Pay_Grade) {
+		UDF_Pay_Grade = uDF_Pay_Grade;
+	}
+
+	public String getUDF_Large_Functional_Group() {
+		return UDF_Large_Functional_Group;
+	}
+
+	public void setUDF_Large_Functional_Group(String uDF_Large_Functional_Group) {
+		UDF_Large_Functional_Group = uDF_Large_Functional_Group;
+	}
+
+	public String getUDF_Job_Family() {
+		return UDF_Job_Family;
+	}
+
+	public void setUDF_Job_Family(String uDF_Job_Family) {
+		UDF_Job_Family = uDF_Job_Family;
+	}
+
+	public String getUDF_Minimum_Education_Requirement() {
+		return UDF_Minimum_Education_Requirement;
+	}
+
+	public void setUDF_Minimum_Education_Requirement(String uDF_Minimum_Education_Requirement) {
+		UDF_Minimum_Education_Requirement = uDF_Minimum_Education_Requirement;
+	}
+
+	public String getUDF_Minimum_Experience_Requirement() {
+		return UDF_Minimum_Experience_Requirement;
+	}
+
+	public void setUDF_Minimum_Experience_Requirement(String uDF_Minimum_Experience_Requirement) {
+		UDF_Minimum_Experience_Requirement = uDF_Minimum_Experience_Requirement;
+	}
+
+	public String getUDF_Position_Designation() {
+		return UDF_Position_Designation;
+	}
+
+	public void setUDF_Position_Designation(String uDF_Position_Designation) {
+		UDF_Position_Designation = uDF_Position_Designation;
+	}
+
+	public String getUDF_Locations_applicable_to_Safety_Sensitive_for_this_position() {
+		return UDF_Locations_applicable_to_Safety_Sensitive_for_this_position;
+	}
+
+	public void setUDF_Locations_applicable_to_Safety_Sensitive_for_this_position(
+			String uDF_Locations_applicable_to_Safety_Sensitive_for_this_position) {
+		UDF_Locations_applicable_to_Safety_Sensitive_for_this_position = uDF_Locations_applicable_to_Safety_Sensitive_for_this_position;
+	}
+
+	public String getUDF_Essential_Duties_and_Responsibilities() {
+		return UDF_Essential_Duties_and_Responsibilities;
+	}
+
+	public void setUDF_Essential_Duties_and_Responsibilities(String uDF_Essential_Duties_and_Responsibilities) {
+		UDF_Essential_Duties_and_Responsibilities = uDF_Essential_Duties_and_Responsibilities;
+	}
+
+	public String getUDF_Education_Detail() {
+		return UDF_Education_Detail;
+	}
+
+	public void setUDF_Education_Detail(String uDF_Education_Detail) {
+		UDF_Education_Detail = uDF_Education_Detail;
+	}
+
+	public String getUDF_Experience_Detail() {
+		return UDF_Experience_Detail;
+	}
+
+	public void setUDF_Experience_Detail(String uDF_Experience_Detail) {
+		UDF_Experience_Detail = uDF_Experience_Detail;
+	}
+
+	public String getUDF_Qualifications_and_Competencies() {
+		return UDF_Qualifications_and_Competencies;
+	}
+
+	public void setUDF_Qualifications_and_Competencies(String uDF_Qualifications_and_Competencies) {
+		UDF_Qualifications_and_Competencies = uDF_Qualifications_and_Competencies;
+	}
+
+	public String getUDF_Nature_of_Work() {
+		return UDF_Nature_of_Work;
+	}
+
+	public void setUDF_Nature_of_Work(String uDF_Nature_of_Work) {
+		UDF_Nature_of_Work = uDF_Nature_of_Work;
+	}
+
+	public String getUDF_Physical_Requirements() {
+		return UDF_Physical_Requirements;
+	}
+
+	public void setUDF_Physical_Requirements(String uDF_Physical_Requirements) {
+		UDF_Physical_Requirements = uDF_Physical_Requirements;
 	}
 
 

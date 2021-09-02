@@ -1,12 +1,6 @@
-<form [formGroup]="searchForm" class="example-form">
+<form id='searchform' [formGroup]="searchForm" class="example-form">
 
   <div id="divSearchFilters" class='mat-elevation-z6'>
-
-    <div id="divFilterButtons">
-      <mat-chip-list #matChipList='matChipList' selectable>
-        <mat-chip #c="matChip" (click)="toggleSelection(c)" *ngFor="let fam of jobFamilies;">{{fam}}</mat-chip>
-      </mat-chip-list>
-    </div>
 
     <div id='divJobSearch' class='mat-elevation-z6'>
       <div id='filterOpts'>
@@ -36,6 +30,12 @@
     <div id='clearfilters'>
       <button id="clearSearch" (click)='clickClear()'>Clear</button>
     </div>      
+
+    <div id="divFilterButtons">
+      <mat-chip-list #matChipList='matChipList' selectable>
+        <mat-chip #c="matChip" (click)="toggleSelection(c)" *ngFor="let fam of jobFamilies;">{{fam}}</mat-chip>
+      </mat-chip-list>
+    </div>
 
 
   </div>

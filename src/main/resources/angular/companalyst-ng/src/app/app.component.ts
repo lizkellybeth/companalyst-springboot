@@ -32,8 +32,8 @@ export class AppComponent implements OnInit, AfterViewInit{
         this.companyJobs = res as CompanyJob[];
         var ct: number = 0;
         for (let job of this.companyJobs){
-          job.Selected = false;
-          job.Position = ct;
+          //job.Selected = false;
+          //job.Position = ct;
           var jobFam = job.UDF_Job_Family;
           if (!this.jobFamilies.includes(jobFam) && jobFam != null && jobFam != 'null'  && jobFam != ''){
             this.jobFamilies.push(jobFam);
