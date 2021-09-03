@@ -10,9 +10,6 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 
 public class JsonUtil {
@@ -36,17 +33,10 @@ public class JsonUtil {
 	
 	public static CompanyJobDetails jsonToJobDetails(String json) {
 		json = JsonUtil.replaceSpacesInKeys(json);
-		CompanyJobDetails data = new Gson().fromJson(json, CompanyJobDetails.class);
-		//System.out.println("GSON: " + data);
-		return data;
-	}
+		JSONObject jobj = new JSONObject(json);
+		Map map = jobj.toMap();
+		CompanyJobDetails data = new CompanyJobDetails(map);
 
-	public static CompanyJob jsonToJobSummary(String json) {
-		json = JsonUtil.replaceSpacesInKeys(json);
-		Gson gson = new GsonBuilder().serializeNulls().create(); 
-		CompanyJob r = gson.fromJson(json, new TypeToken<List<CompanyJob>>(){}.getType());
-		CompanyJob data = new Gson().fromJson(json, CompanyJob.class);
-		//System.out.println("GSON: " + data);
 		return data;
 	}
 
