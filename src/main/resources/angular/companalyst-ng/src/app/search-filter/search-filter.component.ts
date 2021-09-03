@@ -52,9 +52,9 @@ export class SearchFilterComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   clickClear() {
-    this.filteredJobs = [...this.companyJobs]
+    this.filteredJobs = []
     this.searchForm.reset();
-    this.filterChanged.emit(this.filteredJobs);
+    this.filterChanged.emit(this.companyJobs);
     var chips = this.matChipList.chips;
     for (var chip of chips) {
       chip.selected = false;
