@@ -10,6 +10,7 @@ import { JobDetailsService } from '../job-details.service';
 export class CompanyJobComponent implements OnInit, AfterViewInit {
 
   expanded: boolean = false;
+  expandedElement: JobDetails | null;
 
   @Input() jdmJobDescHistoryID: string;
   jobDetails: JobDetails;

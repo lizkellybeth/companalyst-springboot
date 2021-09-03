@@ -29,6 +29,7 @@ public class CompanyJob {
 	private String UDF_Organization;	
 	private String UDF_FLSA_Classification;
 	private String UDF_Large_Functional_Group;
+	private String UDF_Pay_Grade;
 	
 	private boolean markedForDeletion = false;
 
@@ -58,6 +59,7 @@ public class CompanyJob {
 		this.UDF_Organization = (String) map.get("UDF_Organization");
 		this.UDF_FLSA_Classification = (String) map.get("UDF_FLSA_Classification");
 		this.UDF_Large_Functional_Group = (String) map.get("UDF_Large_Functional_Group");
+		this.UDF_Pay_Grade = (String) map.get("UDF_Pay_Grade");
 	}
 	
 	public Map<String,String> toMap(){
@@ -76,6 +78,7 @@ public class CompanyJob {
 		map.put("UDF_Organization", UDF_Organization);
 		map.put("UDF_FLSA_Classification", UDF_FLSA_Classification);
 		map.put("UDF_Large_Functional_Group", UDF_Large_Functional_Group);
+		map.put("UDF_Pay_Grade", UDF_Pay_Grade);
 		return map;
 	}
 	
@@ -215,6 +218,14 @@ public class CompanyJob {
 
 	public void setUDF_Large_Functional_Group(String uDF_Large_Functional_Group) {
 		UDF_Large_Functional_Group = uDF_Large_Functional_Group;
+	}
+
+	public String getUDF_Pay_Grade() {
+		return UDF_Pay_Grade;
+	}
+
+	public void setUDF_Pay_Grade(String uDF_Pay_Grade) {
+		UDF_Pay_Grade = uDF_Pay_Grade;
 	}
 
 

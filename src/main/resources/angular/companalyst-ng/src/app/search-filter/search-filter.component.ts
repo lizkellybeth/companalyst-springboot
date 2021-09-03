@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges, ViewChildren, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges, ViewChildren, ViewChild, AfterViewInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { CompanyJob } from '../company-job';
 import { MatChip, MatChipList } from '@angular/material/chips';
@@ -8,7 +8,7 @@ import { MatChip, MatChipList } from '@angular/material/chips';
   templateUrl: './search-filter.component.html',
   styleUrls: ['./search-filter.component.css']
 })
-export class SearchFilterComponent implements OnInit, OnChanges {
+export class SearchFilterComponent implements OnInit, AfterViewInit, OnChanges {
 
   @ViewChild('matChipList') matChipList: MatChipList;
 
@@ -42,6 +42,7 @@ export class SearchFilterComponent implements OnInit, OnChanges {
       this.searchFilterOptions.push(key);
     }
   }
+  ngAfterViewInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {}
 
@@ -64,6 +65,12 @@ export class SearchFilterComponent implements OnInit, OnChanges {
     console.log("hey! " + JSON.stringify(this.searchForm.value['searchText']));
     var searchText: string = this.searchForm.value['searchText'];
     var searchFilter: string = this.searchFilterOptionMap.get(this.searchForm.value['searchFilter']);
+    console.log("searchText: " + searchText + " || searchFilter: " + searchFilter);
+    var chips = this.matChipList.chips;
+    for (var chip of chips) {
+      chip.selected = false;
+    }
+
     this.filteredJobs = []
     for (var job of this.companyJobs) {
       if (searchText.length > 0) {
@@ -74,6 +81,7 @@ export class SearchFilterComponent implements OnInit, OnChanges {
           }
         }
         else {// no filter, check every field ...
+          console.log("NO FILTER");
           for (var column of this.displayedColumns) {
             if (column != 'select'){
               var col = String(job[column]);
@@ -84,6 +92,8 @@ export class SearchFilterComponent implements OnInit, OnChanges {
               }
             }
           }
+
+          /*
           //CompanyJobDesc is not included in the table columns
           if ((job["CompanyJobDesc"])) {
             var temp = (job["CompanyJobDesc"]).toUpperCase();
@@ -93,6 +103,7 @@ export class SearchFilterComponent implements OnInit, OnChanges {
               }
             }
           }
+          */
         }
     
       } else {

@@ -67,7 +67,7 @@ public class CompAnalystController {
     
 	@Value("${companalyst.auth.password}")
     private String password;
-	    
+	
     private String authToken;
     private Date expireDate;
     
@@ -182,6 +182,7 @@ public class CompAnalystController {
 				+ "&ReturnUDFFields=Large%20Functional%20Group" 
 					+ SEPARATOR + "Job%20Family" 
 					+ SEPARATOR + "FLSA%20Classification" 
+					+ SEPARATOR + "Pay%20Grade" 
 					+ SEPARATOR + "Organization";
 		System.out.println("companyJobList URL: " + url);
 		String companyJobList =  getJson(url);
@@ -252,31 +253,46 @@ public class CompAnalystController {
     	System.out.println("getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
     	
     	//check memory cache
-    	CompanyJobDetails deets = CompAnalystController.jobDetailsCache.get(jdmJobDescHistoryID);
-
-    	if (deets == null) {	
-    		// check DB cache
-    		deets = jobDetailsRepo.findByJDMJobDescHistoryID(jdmJobDescHistoryID);
-    	}
-
-    	if ((deets == null) || deets.isStale()) {
-    		//fetch from salary.com
-    		try {
-    			String s = fetchCompanyJobDetails(jdmJobDescHistoryID);
-    			deets = JsonUtil.jsonToJobDetails(s);
-    			deets.setCachedDate(new Date());
-
-    		} catch(Exception e) {
-    			e.printStackTrace();
-    			throw new Exception("failed to fetch data from salary.com", e);
-    		}
-    	} 
+    	CompanyJobDetails cacheDeets = CompAnalystController.jobDetailsCache.get(jdmJobDescHistoryID);
+    	CompanyJobDetails dbDeets = null;
+    	CompanyJobDetails fetchedDeets = null;
     	
-    	String json = JsonUtil.stringifyJobDetails(deets);
-    	CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, deets);
-    	deets = jobDetailsRepo.save(deets);
+    	boolean needToFetch = false;
+    	
+    	if ((cacheDeets == null) || (cacheDeets.isStale())){	    		
+    		dbDeets = jobDetailsRepo.findByJDMJobDescHistoryID(jdmJobDescHistoryID);   		
+    		if (dbDeets == null) {
+    			needToFetch = true;
+    		} else {
+    			if (dbDeets.isStale()) {
+        			needToFetch = true;
+    			}		
+    		}
+    		
+    		if (needToFetch) {
+    			try {
+    				String s = fetchCompanyJobDetails(jdmJobDescHistoryID);
+    				fetchedDeets = JsonUtil.jsonToJobDetails(s);
+    				fetchedDeets.setCachedDate(new Date());
+    				
+    				if (dbDeets != null) {
+    					jobDetailsRepo.delete(dbDeets);
+    				}
+    				dbDeets = jobDetailsRepo.save(fetchedDeets);
 
-    	json = JsonUtil.stringifyJobDetails(deets);    	
+    			} catch(Exception e) {
+    				// something went wrong: 
+    				e.printStackTrace();
+    				if (dbDeets == null) {
+    					// not recoverable
+    					throw new Exception("failed to fetch data from salary.com", e);
+    				} 
+    			}     	
+    		}
+        	CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, dbDeets);
+        	cacheDeets = dbDeets;    		
+    	}
+    	String json = JsonUtil.stringifyJobDetails(cacheDeets);    	
     	return json;
     }
     

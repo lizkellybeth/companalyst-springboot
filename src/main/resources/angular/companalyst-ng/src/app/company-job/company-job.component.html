@@ -1,6 +1,23 @@
 <div class="jobdetailscard mat-table cdk-table mat-elevation-z8 ng-tns-c138-0">
 
-  <mat-accordion class="example-card">
+  <div>
+    <table id="tblJobDetails" *ngIf="jobDetails != null; else fetching">
+      <tr class="jobDetailsRow" *ngFor="let key of fieldsToShow;">
+        <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
+        <td class="jobDetailsCell">{{jobDetails[key]}}</td>
+      </tr>
+    </table>
+  
+    <ng-template #fetching>
+      <mat-panel-title>
+        fetching...
+      </mat-panel-title>
+    </ng-template>
+  
+  </div>
+
+
+  <!--<mat-accordion class="example-card">
     <mat-expansion-panel hideToggle  (click)='toggleIcon()'>
 
       <mat-expansion-panel-header *ngIf="jobDetails != null; else fetching">
@@ -21,203 +38,7 @@
         </tr>
       </table>
 
-      <!--
-      <table id="tblJobDetails" *ngIf="jobDetails != null">
-        <tr>
-          <th>Job Title</th>
-          <td>{{jobDetails.CompanyJobTitle}}</td>
-        </tr>
-        <tr>
-          <th>Organization</th>
-          <td>{{jobDetails.UDF_Organization}}</td>
-        </tr>
-        <tr>
-          <th>Date</th>
-          <td>{{jobDetails.UDF_Date}}</td>
-        </tr>
-        <tr>
-          <th>Department</th>
-          <td>{{jobDetails.UDF_Department}}</td>
-        </tr>
-        <tr>
-          <th>Comments</th>
-          <td>{{jobDetails.UDF_Comments}}</td>
-        </tr>
-        <tr>
-          <th>FLSA Classification</th>
-          <td>{{jobDetails.UDF_FLSA_Classification}}</td>
-        </tr>
-        <tr>
-          <th>Pay Grade</th>
-          <td>{{jobDetails.UDF_Pay_Grade}}</td>
-        </tr>
-        <tr>
-          <th>Large Functional Group</th>
-          <td>{{jobDetails.UDF_Large_Functional_Group}}</td>
-        </tr>
-        <tr>
-          <th>Job Family</th>
-          <td>{{jobDetails.UDF_Job_Family}}</td>
-        </tr>
-        <tr>
-          <th>Minimum Education Requirement</th>
-          <td>{{jobDetails.UDF_Minimum_Education_Requirement}}</td>
-        </tr>
-        <tr>
-          <th>Minimum Experience Requirement</th>
-          <td>{{jobDetails.UDF_Minimum_Experience_Requirement}}</td>
-        </tr>
-        <tr>
-          <th>Position Designation</th>
-          <td>{{jobDetails.UDF_Position_Designation}}</td>
-        </tr>
-        <tr>
-          <th>Locations Safety Sensitive</th>
-          <td>{{jobDetails.UDF_Locations_applicable_to_Safety_Sensitive_for_this_position}}</td>
-        </tr>
-        <tr>
-          <th>Essential Duties and Responsibilities</th>
-          <td>{{jobDetails.UDF_Essential_Duties_and_Responsibilities}}</td>
-        </tr>
-        <tr>
-          <th>Education Detail</th>
-          <td>{{jobDetails.UDF_Education_Detail}}</td>
-        </tr>
-        <tr>
-          <th>Experience Detail</th>
-          <td>{{jobDetails.UDF_Experience_Detail}}</td>
-        </tr>
-        <tr>
-          <th>Qualifications and Competencies</th>
-          <td>{{jobDetails.UDF_Qualifications_and_Competencies}}</td>
-        </tr>
-        <tr>
-          <th>Nature of Work</th>
-          <td>{{jobDetails.UDF_Nature_of_Work}}</td>
-        </tr>
-        <tr>
-          <th>Physical Requirements</th>
-          <td>{{jobDetails.UDF_Physical_Requirements}}</td>
-        </tr>
-
-        <tr>
-          <th>JDMJobDescHistoryID</th>
-          <td>{{jobDetails.JDMJobDescHistoryID}}</td>
-        </tr>
-        <tr>
-          <th>CompanyJobCode</th>
-          <td>{{jobDetails.CompanyJobCode}}</td>
-        </tr>
-        <tr>
-          <th>CompanyJobTitle</th>
-          <td>{{jobDetails.CompanyJobTitle}}</td>
-        </tr>
-
-        <tr>
-          <th>JobFamily</th>
-          <td>{{jobDetails.JobFamily}}</td>
-        </tr>
-        <tr>
-          <th>CompanyJobDesc</th>
-          <td>{{jobDetails.CompanyJobDesc}}</td>
-        </tr>
-        <tr>
-          <th>JobFLSAStatusDesc</th>
-          <td>{{jobDetails.JobFLSAStatusDesc}}</td>
-        </tr>
-        
-        <tr>
-          <th>CompanyJobSummary</th>
-          <td>{{jobDetails.CompanyJobSummary}}</td>
-        </tr>
-      
-        <tr>
-          <th>Experience</th>
-          <td>{{jobDetails.Experience}}</td>
-        </tr>
-        <tr>
-          <th>CompetencyNames</th>
-          <td>{{jobDetails.CompetencyNames}}</td>
-        </tr>
-        <tr>
-          <th>Skills</th>
-          <td>{{jobDetails.Skills}}</td>
-        </tr>
-        <tr>
-          <th>ReportsTo</th>
-          <td>{{jobDetails.ReportsTo}}</td>
-        </tr>
-        <tr>
-          <th>CertificateLicenses</th>
-          <td>{{jobDetails.CertificateLicenses}}</td>
-        </tr>
-        <tr>
-          <th>ManagePeople</th>
-          <td>{{jobDetails.ManagePeople}}</td>
-        </tr>
-        <tr>
-          <th>EducationDesc</th>
-          <td>{{jobDetails.EducationDesc}}</td>
-        </tr>
-        <tr>
-          <th>TimeSpents</th>
-          <td>{{jobDetails.TimeSpents}}</td>
-        </tr>
-
-        <tr>
-          <th>TierCode</th>
-          <td>{{jobDetails.TierCode}}</td>
-        </tr>
-        <tr>
-          <th>TierDesc</th>
-          <td>{{jobDetails.TierDesc}}</td>
-        </tr>
-        <tr>
-          <th>JobFocus</th>
-          <td>{{jobDetails.JobFocus}}</td>
-        </tr>
-        <tr>
-          <th>JobFunction</th>
-          <td>{{jobDetails.JobFunction}}</td>
-        </tr>
-        <tr>
-          <th>LastApprovedByUName</th>
-          <td>{{jobDetails.LastApprovedByUName}}</td>
-        </tr>
-        <tr>
-          <th>LastApprovedDate</th>
-          <td>{{jobDetails.LastApprovedDate}}</td>
-        </tr>
-        <tr>
-          <th>LastUpdateByUName</th>
-          <td>{{jobDetails.LastUpdateByUName}}</td>
-        </tr>
-        <tr>
-          <th>LastUpdateDate</th>
-          <td>{{jobDetails.LastUpdateDate}}</td>
-        </tr>
-        <tr>
-          <th>LastPublishedByUName</th>
-          <td>{{jobDetails.LastPublishedByUName}}</td>
-        </tr>
-        <tr>
-          <th>LastPublishedDate</th>
-          <td>{{jobDetails.LastPublishedDate}}</td>
-        </tr>
-        <tr>
-          <th>CompanyJobDescStatusCode</th>
-          <td>{{jobDetails.CompanyJobDescStatusCode}}</td>
-        </tr>
-        <tr>
-          <th>CompanyJobDescStatusDesc</th>
-          <td>{{jobDetails.CompanyJobDescStatusDesc}}</td>
-        </tr>
-      </table>
-
-      -->
-
-
     </mat-expansion-panel>
-  </mat-accordion>
+  </mat-accordion>-->
 
 </div>

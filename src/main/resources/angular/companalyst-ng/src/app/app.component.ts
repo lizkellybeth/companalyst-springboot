@@ -29,17 +29,21 @@ export class AppComponent implements OnInit, AfterViewInit{
     this.jobListService.fetchCompanyJobList()
       .then(res => {
         console.log("fetched result: " + (res ));
-        this.companyJobs = res as CompanyJob[];
-        var ct: number = 0;
-        for (let job of this.companyJobs){
-          //job.Selected = false;
-          //job.Position = ct;
+        //this.companyJobs = res as CompanyJob[];
+        this.companyJobs = [];
+        var jobs = res as CompanyJob[];
+        for (let job of jobs){
           var jobFam = job.UDF_Job_Family;
           if (!this.jobFamilies.includes(jobFam) && jobFam != null && jobFam != 'null'  && jobFam != ''){
             this.jobFamilies.push(jobFam);
           }
-          ct++;
+          if (job.UDF_Organization.indexOf("NRAO") > -1){
+            this.companyJobs.push(job);
+          } else {
+            console.log("job.UDF_Organization: " + job.UDF_Organization);
+          }
         }
+        this.companyJobs = [...this.companyJobs];
       })
       .catch(err => {
         console.error(err);

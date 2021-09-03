@@ -24,7 +24,7 @@ import { SearchFilterComponent } from './search-filter/search-filter.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import { JobDetailsListComponent } from './job-details-list/job-details-list.component';
 import {MatExpansionModule} from '@angular/material/expansion';
-
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -50,7 +50,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     MatChipsModule,
     MatCardModule,
     MatCheckboxModule,
-    MatExpansionModule
+    MatExpansionModule,
+    MatDividerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

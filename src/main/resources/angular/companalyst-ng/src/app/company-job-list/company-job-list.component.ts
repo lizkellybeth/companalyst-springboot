@@ -7,6 +7,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { JobDetails } from '../job-details';
 
 
 @Component({
@@ -32,10 +33,11 @@ export class CompanyJobListComponent implements AfterViewInit, OnChanges {
   dataSource: MatTableDataSource<CompanyJob> = new MatTableDataSource(this.companyJobs);
   selection: SelectionModel<CompanyJob> = new SelectionModel<CompanyJob>(true, []);
   //displayedColumns: string[] = ['select', 'JDMJobDescHistoryID', 'CompanyJobCode', 'CompanyJobTitle', 'JobFamily', 'JobFLSAStatusDesc'];
-  //displayedColumns: string[] = ['select', 'CompanyJobCode', 'CompanyJobTitle', 'UDF_Large_Functional_Group', 'UDF_Job_Family', 'UDF_FLSA_Classification'];
-  displayedColumns: string[] = ['select', 'CompanyJobCode', 'CompanyJobTitle', 'UDF_Large_Functional_Group', 'UDF_Job_Family'];
+  displayedColumns: string[] = ['CompanyJobCode', 'CompanyJobTitle', 'UDF_Large_Functional_Group', 'UDF_Job_Family', 'UDF_Pay_Grade', 'UDF_FLSA_Classification'];
+  //displayedColumns: string[] = ['select', 'CompanyJobCode', 'CompanyJobTitle', 'UDF_Large_Functional_Group', 'UDF_Job_Family'];
 
-  expandedElement: CompanyJob | null;
+  expandedElement: JobDetails | null;
+  selectedJDMJobDescHistoryID: string | null;
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -136,6 +138,11 @@ export class CompanyJobListComponent implements AfterViewInit, OnChanges {
     this.isAllSelected() ?
       this.selection.clear() :
       this.dataSource.data.forEach(row => this.selection.select(row));
+  }
+
+  public fetchJobDetails(jdmJobDescHistoryID: string) {
+    console.log("CompanyJobComponent fetchJobDetails! " + jdmJobDescHistoryID)
+    this.selectedJDMJobDescHistoryID = jdmJobDescHistoryID;
   }
 
 }

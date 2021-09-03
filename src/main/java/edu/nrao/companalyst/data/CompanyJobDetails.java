@@ -6,9 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 
-import org.springframework.beans.factory.annotation.Value;
-
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +16,8 @@ import javax.persistence.Column;
 @Entity
 public class CompanyJobDetails {
 	
-	@Value("${companalyst.db.maxage.minutes}")
-	public static long MAX_AGE;//minutes
-
+	public long MAX_AGE = 60;//minutes
+	    
 	@Column(unique=true) 
 	private String JDMJobDescHistoryID;
 	
@@ -168,7 +164,7 @@ public class CompanyJobDetails {
 	    long diffInMillies = Math.abs(now.getTime() - cachedDate.getTime());
 	    long diff = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
-	    if (diff > CompanyJobDetails.MAX_AGE) {
+	    if (diff > MAX_AGE) {
 	    	return true;
 	    }
 		return false;
