@@ -21,7 +21,8 @@ export class SearchFilterComponent implements OnInit, AfterViewInit, OnChanges {
     ["Job Code", "CompanyJobCode"],
     ["Job Title", "CompanyJobTitle"],
     ["Job Family", "UDF_Job_Family"],
-    ["FLSA Status", "UDF_FLSA_Status"],
+    ["Pay Grade", "UDF_Pay_Grade"],
+    ["FLSA Classification", "UDF_FLSA_Classification"],
     ["Large Functional Group", "UDF_Large_Functional_Group"]
   ]);
 
@@ -91,19 +92,7 @@ export class SearchFilterComponent implements OnInit, AfterViewInit, OnChanges {
                 }
               }
             }
-          }
-
-          /*
-          //CompanyJobDesc is not included in the table columns
-          if ((job["CompanyJobDesc"])) {
-            var temp = (job["CompanyJobDesc"]).toUpperCase();
-            if (temp.includes(searchText.toUpperCase())) {
-              if (!this.filteredJobs.includes(job)) {
-                this.filteredJobs.push(job)
-              }
-            }
-          }
-          */
+          }          
         }
     
       } else {
