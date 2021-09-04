@@ -1181,7 +1181,7 @@ __webpack_require__.r(__webpack_exports__);
 class Constants {
 }
 //public static rootUrl: string = "http://localhost:10001/";
-Constants.rootUrl = "companalyst";
+Constants.rootUrl = "";
 
 
 /***/ }),
