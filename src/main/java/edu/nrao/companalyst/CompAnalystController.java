@@ -77,6 +77,8 @@ public class CompAnalystController {
     private static final Logger log = LoggerFactory.getLogger(CompAnalystController.class);
     
     private final static String SEPARATOR= "%7C%7C%7C";
+    
+    private Date lastJobListUpdate = null;
         
     @Autowired
     private JobDetailsRepo jobDetailsRepo;
@@ -98,6 +100,8 @@ public class CompAnalystController {
 	public void init()  {
 		try {
 			syncDatabase();
+			lastJobListUpdate = new Date();
+			
 		} catch (Exception e) {
 			// DB synch failed
 			e.printStackTrace();

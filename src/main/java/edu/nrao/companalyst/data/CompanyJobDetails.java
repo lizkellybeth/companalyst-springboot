@@ -16,7 +16,7 @@ import javax.persistence.Column;
 @Entity
 public class CompanyJobDetails {
 	
-	public long MAX_AGE = 60;//minutes
+	public long MAX_AGE = 2;//hours
 	    
 	@Column(unique=true) 
 	private String JDMJobDescHistoryID;
@@ -162,7 +162,7 @@ public class CompanyJobDetails {
 
 		Date now = new Date();
 	    long diffInMillies = Math.abs(now.getTime() - cachedDate.getTime());
-	    long diff = TimeUnit.MINUTES.convert(diffInMillies, TimeUnit.MILLISECONDS);
+	    long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
 	    if (diff > MAX_AGE) {
 	    	return true;

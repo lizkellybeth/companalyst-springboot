@@ -14,8 +14,7 @@ public class CompanyJob {
 	
 	@Column(unique=true) 
 	private String JDMJobDescHistoryID;
-	
-	
+		
 	private String CompanyJobCode;
 	private String CompanyJobTitle;
 	private String JobLevel;
