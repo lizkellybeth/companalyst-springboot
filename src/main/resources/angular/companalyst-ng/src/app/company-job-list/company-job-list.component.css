@@ -133,13 +133,14 @@ h5 {
   margin-right: 15px;
   margin-top: 15px;
   border-radius: 10px;
-  width: 75%;
+  width: 95%;
   display: inline-block;
   vertical-align: top;
   padding: 16px;
   height: fit-content;
   padding-bottom: 10px;
 }
+
 
 app-search-filter {
   width: 43%;
@@ -157,22 +158,48 @@ app-search-filter {
   heightxx: 600px;
 }
 
-.tableCell4 {
+.tableCell4x {
   width: 4%;
 }
 
-.tableCell10 {
+.tableCell10x {
   width: 10%;
 }
 
-.tableCell15 {
+.tableCell15x {
   width: 15%;
 }
 
 
-.tableCell25 {
+.tableCell25x {
   width: 25%;
 }
+
+#container-tbl {
+  width: 100%;
+}
+
+#container-left{
+  width: 25%;
+  vertical-align: top;
+}
+
+#container-right{
+  width: 75%;
+  vertical-align: top;
+} 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

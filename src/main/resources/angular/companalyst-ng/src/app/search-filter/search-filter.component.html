@@ -2,9 +2,11 @@
 
   <div id="divSearchFilters" class='mat-elevation-z6'>
 
+    <p>Filter by Search Field</p>
+    
     <div id='divJobSearch' class='mat-elevation-z6'>
-      <div id='filterOpts'>
-        <mat-form-field id="filter-field">
+      <div id='filterOpts' class='formfield' >
+        <mat-form-field>
           <mat-label>Filter on...</mat-label>
           <select formControlName="searchFilter" matNativeControl>
             <!--<option value="">&nbsp;</option>-->
@@ -14,8 +16,10 @@
         <i class="fa fa-filter filterFunnel" aria-hidden="true"></i>
       </div>
     
-      <div id='filterTxt'>
-        <mat-form-field id="search-field">
+     
+
+      <div id='filterTxt' class='formfield' >
+        <mat-form-field>
           <mat-label>Search Text</mat-label>
           <input formControlName="searchText" matInput placeholder="Some text" value="">
         </mat-form-field>
@@ -30,13 +34,14 @@
     <mat-divider></mat-divider>
 
     <div id='clearfilters'>
-      Filter Results: {{filteredJobs.length}}<button id="clearSearch" (click)='clickClear()'>Clear Filters</button>
+      Results: {{filteredJobs.length}}<button id="clearSearch" (click)='clickClear()'>Clear Filters</button>
     </div>      
 
     <mat-divider></mat-divider>
 
-
+    <p>Filter by Job Family</p>
     <div id="divFilterButtons">
+
       <mat-chip-list #matChipList='matChipList' selectable>
         <mat-chip #c="matChip" (click)="toggleSelection(c)" *ngFor="let fam of jobFamilies;">{{fam}}</mat-chip>
       </mat-chip-list>

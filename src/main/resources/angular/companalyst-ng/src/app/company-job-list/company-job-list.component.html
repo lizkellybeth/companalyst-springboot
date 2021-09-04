@@ -1,94 +1,79 @@
-
-<app-search-filter 
-  [companyJobs]=companyJobs 
-  [jobFamilies]=jobFamilies 
-  [displayedColumns]=displayedColumns
-  (filterChanged)="filterHandler($event)">
-</app-search-filter>
-
-
-<div id='divJobListExpandable'  class="mat-elevation-z6">
-
- 
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" multiTemplateDataRows>
-
-  <!--<ng-container matColumnDef="select">
-    <th mat-header-cell *matHeaderCellDef class='tableCell4'>
-      &nbsp;
-    </th>
-    <td mat-cell *matCellDef="let row">
-      <mat-checkbox (click)="$event.stopPropagation();"
-                    (change)="onChangeEventFunc(row, $event);$event ? selection.toggle(row) : null"
-                    [checked]="selection.isSelected(row)">
-      </mat-checkbox>
+<table id='container-tbl'>
+  <tr>
+    <td id='container-left'>
+      <app-search-filter [companyJobs]=companyJobs [jobFamilies]=jobFamilies [displayedColumns]=displayedColumns
+        (filterChanged)="filterHandler($event)">
+      </app-search-filter>
     </td>
-  </ng-container>
--->
 
-    <ng-container matColumnDef="CompanyJobCode">
-      <th mat-header-cell *matHeaderCellDef  mat-sort-header class='tableCell15'> Job Code </th>
-      <td mat-cell *matCellDef="let element"> {{element.CompanyJobCode}} </td>
-    </ng-container>
+    <td id='container-right'>
+      <div id='divJobListExpandable' class="mat-elevation-z6">
 
-    <ng-container matColumnDef="CompanyJobTitle">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class='tableCell25'> Job Title </th>
-      <td mat-cell *matCellDef="let element"> {{element.CompanyJobTitle}} </td>
-    </ng-container>
+        <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8" multiTemplateDataRows>
 
-    <ng-container matColumnDef="UDF_Large_Functional_Group">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class='tableCell25'> Large functional Group </th>
-      <td mat-cell *matCellDef="let element"> {{element.UDF_Large_Functional_Group}} </td>
-    </ng-container>
+          <ng-container matColumnDef="CompanyJobCode">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Job Code </th>
+            <td mat-cell *matCellDef="let element"> {{element.CompanyJobCode}} </td>
+          </ng-container>
 
-     <ng-container matColumnDef="UDF_Job_Family">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class='tableCell15'> Job Family </th>
-      <td mat-cell *matCellDef="let element"> {{element.UDF_Job_Family}} </td>
-    </ng-container>
+          <ng-container matColumnDef="CompanyJobTitle">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Job Title </th>
+            <td mat-cell *matCellDef="let element"> {{element.CompanyJobTitle}} </td>
+          </ng-container>
 
-    <ng-container matColumnDef="UDF_Pay_Grade">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class='tableCell10'> Pay Grade </th>
-      <td mat-cell *matCellDef="let element"> {{element.UDF_Pay_Grade}} </td>
-    </ng-container>
+          <ng-container matColumnDef="UDF_Large_Functional_Group">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Large functional Group </th>
+            <td mat-cell *matCellDef="let element">{{element.UDF_Large_Functional_Group.replace('null', ' ')}} </td>
+          </ng-container>
 
-    <ng-container matColumnDef="UDF_FLSA_Classification">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header class='tableCell10'>FLSA Classification </th>
-      <td mat-cell *matCellDef="let element"> {{element.UDF_FLSA_Classification}} </td>
-    </ng-container>
+          <ng-container matColumnDef="UDF_Job_Family">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header > Job Family </th>
+            <td mat-cell *matCellDef="let element">{{element.UDF_Job_Family.replace('null', ' ')}} </td>
+          </ng-container>
 
-    <ng-container matColumnDef="expandedDetail">
-      <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-        <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-          <div class="example-element-description" *ngIf="selectedJDMJobDescHistoryID!=null&&selectedJDMJobDescHistoryID==element.JDMJobDescHistoryID">
-            <app-company-job [jdmJobDescHistoryID]=selectedJDMJobDescHistoryID></app-company-job>
-          </div>
-        </div>
-      </td>
-    </ng-container>
-  
-  
-   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <ng-container matColumnDef="UDF_Pay_Grade">
+            <th mat-header-cell *matHeaderCellDef> Pay Grade </th>
+            <td mat-cell *matCellDef="let element">{{element.UDF_Pay_Grade.replace('null', ' ')}} </td>
+          </ng-container>
 
-    <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
-      [class.example-expanded-row]="expandedElement === element"
-      (click)="expandedElement = expandedElement === element ? null : element; fetchJobDetails(element.JDMJobDescHistoryID)">
-    </tr>
+          <ng-container matColumnDef="UDF_FLSA_Classification">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>FLSA Classification </th>
+            <td mat-cell *matCellDef="let element">{{element.UDF_FLSA_Classification.replace('null', ' ')}} </td>
+          </ng-container>
 
-    <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+          <ng-container matColumnDef="LastUpdateDate">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Update On...</th>
+            <td mat-cell *matCellDef="let element"> {{element.LastUpdateDate}} </td>
+          </ng-container>
 
-  </table>
-
-  <mat-paginator [pageSizeOptions]="[15, 30, 60]" showFirstLastButtons >
-  </mat-paginator>
-
-  <!--<button id="clearSelections"  (click)='clearSelections()'>Clear</button>-->
-</div>
-
-<!--<div id="jobDetailsList">
-  <app-job-details-list [selectedDetailIDs]=selectedDetailIDs></app-job-details-list>
-</div>
--->
+          <ng-container matColumnDef="expandedDetail">
+            <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+              <div class="example-element-detail"
+                [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                <div class="example-element-description"
+                  *ngIf="selectedJDMJobDescHistoryID!=null&&selectedJDMJobDescHistoryID==element.JDMJobDescHistoryID">
+                  <app-company-job [jdmJobDescHistoryID]=selectedJDMJobDescHistoryID></app-company-job>
+                </div>
+              </div>
+            </td>
+          </ng-container>
 
 
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
+          <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+            [class.example-expanded-row]="expandedElement === element"
+            (click)="expandedElement = expandedElement === element ? null : element; fetchJobDetails(element.JDMJobDescHistoryID)">
+          </tr>
 
+          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
 
+        </table>
+
+        <mat-paginator [pageSizeOptions]="[12, 30, 60]" showFirstLastButtons>
+        </mat-paginator>
+
+      </div>
+    </td>
+  </tr>
+</table>

@@ -1,3 +1,29 @@
 app-company-job-list {
     width: 50%;
 }
+
+#header-div {
+    height: 120px;
+    background-image: url('/assets/images/BDMW_0003_radio-yellow-sm.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: black;
+}
+
+#title-div {
+    display: inline-block;
+    vertical-align: text-bottom;
+    width: 50%;
+    margin-left: 200px;
+}
+
+#logo-div{
+    display: inline-block;
+    height: 120px;
+}
+
+#site-name {
+    color: white;
+    font-family: sans-serif;
+    font-weight: 300;
+}

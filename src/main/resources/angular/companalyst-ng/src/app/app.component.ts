@@ -1,6 +1,7 @@
 import { AfterViewInit, SimpleChanges } from '@angular/core';
 import { OnChanges } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { CompanyJob } from './company-job';
 import { CompanyJobListService } from './company-job-list.service';
 
@@ -15,7 +16,11 @@ export class AppComponent implements OnInit, AfterViewInit{
   companyJobs: CompanyJob[] = [];
   jobFamilies: string[] = [];
 
-  constructor(private jobListService: CompanyJobListService) { }
+  constructor(private jobListService: CompanyJobListService, private titleService: Title) { }
+
+  public setTitle(newTitle: string) {
+    this.titleService.setTitle("NRAO Career Portal");
+  }
 
   ngOnInit(): void {
     this.fetchCompanyJobList();

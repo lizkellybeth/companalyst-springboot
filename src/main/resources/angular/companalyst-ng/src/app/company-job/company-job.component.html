@@ -4,7 +4,7 @@
     <table id="tblJobDetails" *ngIf="jobDetails != null; else fetching">
       <tr class="jobDetailsRow" *ngFor="let key of fieldsToShow;">
         <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
-        <td class="jobDetailsCell">{{jobDetails[key]}}</td>
+        <td class="jobDetailsCell">{{jobDetails[key].replace("null", " ")}}</td>
       </tr>
     </table>
   
@@ -16,29 +16,5 @@
   
   </div>
 
-
-  <!--<mat-accordion class="example-card">
-    <mat-expansion-panel hideToggle  (click)='toggleIcon()'>
-
-      <mat-expansion-panel-header *ngIf="jobDetails != null; else fetching">
-        <mat-panel-title>
-          {{jobDetails.CompanyJobTitle}} <span class="jobDetailsHeader" [ngClass]="expanded?'collapseIcon':'expandIcon'"></span>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
-      <ng-template #fetching>
-        <mat-panel-title>
-          fetching...
-        </mat-panel-title>
-      </ng-template>
-
-      <table id="tblJobDetails" *ngIf="jobDetails != null">
-        <tr class="jobDetailsRow" *ngFor="let key of fieldsToShow;">
-          <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
-          <td class="jobDetailsCell">{{jobDetails[key]}}</td>
-        </tr>
-      </table>
-
-    </mat-expansion-panel>
-  </mat-accordion>-->
 
 </div>

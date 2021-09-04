@@ -1,11 +1,5 @@
 
   
-  #searchform {
-    display: inline-block;
-    width: 20%;
-    margin-right: 20px;
-  }
-  
   .example-form {
     min-widthx: 150px;
     max-widthx: 500px;
@@ -20,22 +14,23 @@
     display: inline-block;
     position: relative;
     text-align: left;
-    margin-right: 20px;
+    width: 85%;
+    margin-right: 10px;
   }
   
-  #search-field{
+  #search-fieldxx{
     display: inline-block;
     widthxxx: 40%;
   }
   
-  #filter-field{
+  #filter-fieldxx{
     display: inline-block;
     float: left;
   }
   
-  #btn-div{
+  #btn-divx{
     display: inline-block;
-    float: right;
+    floatx: right;
   }
   
   #divJobSearch:after {
@@ -55,12 +50,12 @@
     padding-bottom: 0px;
   }
   
-  .searchGlass {
+  .searchGlassxxx {
     margin-left: -10px;
     margin-right: 20px
   }
   
-  .filterFunnel {
+  .filterFunnelx {
     float: left;
     margin-top: 20px;
   }
@@ -84,7 +79,7 @@
   #divJobSearch{
     border-style:solid;
     border-width: 0px;
-    margin: 15px;
+    margin: 20px;
     border-radius: 10px;
     padding-left: 15px;
     padding-right: 15px;
@@ -92,6 +87,7 @@
     padding-bottom: 5px;
     text-align: right;
     display: inline-block;
+    width: 80%;
   }
 
   #divFilterButtons {
@@ -101,8 +97,9 @@
     margin-right: 15px;
     display: inline-block;
     vertical-align: top;
-    height: 600px;
+    height: 355px;
     overflow: scroll;
+    overflow-x: clip;
   }
 
   #divSearchFilters {
@@ -126,10 +123,17 @@
  
   #filterOpts {
     width: 100%;
+    float: left;
   }
 
   #filterTxt {
     width: 100%;
+    float: left;
+  }
+
+  .formfield {
+    width: 100%;
+ 
   }
 
   #clearfilters {
@@ -145,5 +149,7 @@
   }
 
   #searchform {
-    width: 20%;
+    display: inline-block;
+    margin-right: 20px;
   }
+  
