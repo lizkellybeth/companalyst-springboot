@@ -1180,7 +1180,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Constants", function() { return Constants; });
 class Constants {
 }
-Constants.rootUrl = "http://localhost:10001/";
+//public static rootUrl: string = "http://localhost:10001/";
+Constants.rootUrl = "companalyst";
 
 
 /***/ }),
