@@ -45,8 +45,6 @@ tr.example-element-row:not(.example-expanded-row):active {
 }
 
 .example-form {
-  min-widthx: 150px;
-  max-widthx: 500px;
   display: block;
 }
 
@@ -151,28 +149,6 @@ app-search-filter {
    width: 38%;
     display: inline-block;
     vertical-align: top;
-}
-
-.mat-table {
-  table-layoutxx:fixed;
-  heightxx: 600px;
-}
-
-.tableCell4x {
-  width: 4%;
-}
-
-.tableCell10x {
-  width: 10%;
-}
-
-.tableCell15x {
-  width: 15%;
-}
-
-
-.tableCell25x {
-  width: 25%;
 }
 
 #container-tbl {

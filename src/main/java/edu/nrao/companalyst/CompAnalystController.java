@@ -69,7 +69,7 @@ public class CompAnalystController {
     private String password;
 	
     private String authToken;
-    private Date expireDate;
+    private Date expireDate;//ignore this, just get a new one
     
 	private static HashMap<String, CompanyJobDetails> jobDetailsCache = new HashMap<>();
 	private static String joblist;
@@ -77,7 +77,7 @@ public class CompAnalystController {
     private static final Logger log = LoggerFactory.getLogger(CompAnalystController.class);
     
     private final static String SEPARATOR= "%7C%7C%7C";
-    
+        
     @Autowired
     private JobDetailsRepo jobDetailsRepo;
 
@@ -86,7 +86,7 @@ public class CompAnalystController {
 
 	public static void main(String[] args) {    
 		SpringApplication.run(CompAnalystController.class, args);
-		System.out.println("Running");
+		log.info("Running");
 
 	}
 	
@@ -96,11 +96,17 @@ public class CompAnalystController {
 
 	@PostConstruct
 	public void init()  {
-	   syncCache();
+		try {
+			syncDatabase();
+		} catch (Exception e) {
+			// DB synch failed
+			e.printStackTrace();
+			log.error("syncDatabase() failed during initialization!", e);
+		}
 	}
-
-    private synchronized void syncCache() {
-    	System.out.println("prepareCache...");
+	
+    private synchronized void syncDatabase() throws Exception {
+    	log.info("prepareCache...");
 		List<CompanyJob> cachedJobs = new ArrayList<>();
     	
 		// query jobs already in DB...
@@ -138,7 +144,7 @@ public class CompAnalystController {
 				}				
 			}
 			// save updates
-			jobSummaryRepo.saveAll(updates);
+			saveCompanyJobs(updates);
 
 			// new jobs are inserted
 			for (CompanyJob fJob: fJobs) {
@@ -146,7 +152,7 @@ public class CompAnalystController {
 					insertions.add(fJob);
 				}				
 			}
-			jobSummaryRepo.saveAll(insertions);
+			saveCompanyJobs(insertions);
 			
 			// jobs removed upstream at salary.com are marked for deletion in local DB
 			for (CompanyJob dJob: dbJobs) {
@@ -156,7 +162,7 @@ public class CompAnalystController {
 					dJob.setMarkedForDeletion(true);
 				}
 			}
-			jobSummaryRepo.saveAll(deletes);
+			saveCompanyJobs(deletes);
 			
 			// re-check the repo to get updates
 			dbJobs = jobSummaryRepo.findAll();
@@ -170,44 +176,16 @@ public class CompAnalystController {
 			// problem syncing with salary.com
 			e.printStackTrace();
 			cachedJobs.addAll(dbJobs);
+			joblist = JsonUtil.stringifyJobList(cachedJobs);		
+			throw new Exception("problem synching data from salary.com.", e);
 		}
 		
 		joblist = JsonUtil.stringifyJobList(cachedJobs);		
 	}
 
-	private String fetchJobList() throws Exception {
-    	String url = COMPURL_COMPANYJOBLIST
-				+ "?IsReturnLastApprovedVersion=1"
-				+ "&IsReturnUDFs=1"
-				+ "&ReturnUDFFields=Large%20Functional%20Group" 
-					+ SEPARATOR + "Job%20Family" 
-					+ SEPARATOR + "FLSA%20Classification" 
-					+ SEPARATOR + "Pay%20Grade" 
-					+ SEPARATOR + "Organization";
-		System.out.println("companyJobList URL: " + url);
-		String companyJobList =  getJson(url);
-		System.out.println("companyJobList: " + companyJobList);
-    	if (companyJobList.indexOf("<!DOCTYPE html>") > -1) {
-    		throw new Exception("Problem fetching companyjoblist from CompAnalyst API");
-    	}    		
-		return companyJobList;
-	}
-	
-	private String fetchCompanyJobDetails(String jdmJobDescHistoryID) throws Exception {
-   		System.out.println("--------========= fetchCompanyJobDetails: " + jdmJobDescHistoryID);
-		jdmJobDescHistoryID = URLEncoder.encode(jdmJobDescHistoryID, StandardCharsets.UTF_8);
-		String url = COMPURL_COMPANYJOB +  jdmJobDescHistoryID;
-		String json = this.getJson(url);
-		System.out.println("fetched jobDetails: " + json);
-    	if (json.indexOf("<!DOCTYPE html>") > -1) {
-    		throw new Exception("Problem fetching jobDetails from CompAnalyst API");
-    	}
-    	json = JsonUtil.replaceSpacesInKeys(json);
-		return json;
-	}
-
 	@RequestMapping(value = "/getapitoken", produces = { "application/json" })
-    public synchronized String getApiToken() {
+    public synchronized String getApiToken() throws Exception {
+		log.info("getApiToken()..." );
         try {
             HttpClient client = HttpClientBuilder.create().build();
             HttpPost post = new HttpPost(COMPURL_GETAPITOKEN);
@@ -223,7 +201,7 @@ public class CompAnalystController {
             
             HttpResponse response = client.execute(post);
             String result = EntityUtils.toString(response.getEntity());
-            System.out.println("result: " + result); 
+            log.trace("result: " + result); 
             JSONObject jobj = new JSONObject(result);
             authToken = (String) jobj.get("token");
             String expires = (String) jobj.get("expire_date");
@@ -234,15 +212,18 @@ public class CompAnalystController {
             
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            log.error("could not get API token", e);
+            throw new Exception("could not get API token.");
         }
     }
 
 	//example http://localhost:10001/companyjoblist
     @RequestMapping(value = "/companyjoblist", produces = { "application/json" })
     public String getCompanyJobList() throws Exception {
+		log.info("getCompanyJobList()..." );
     	if (joblist == null) {
-    		syncCache();
+    		log.error("joblist not initialized!");
+    		throw new Exception("joblist not initialized.");
     	}
     	return joblist;
     }
@@ -250,7 +231,7 @@ public class CompAnalystController {
     //example http://localhost:10001/companyjob?jdmJobDescHistoryID=2877
     @RequestMapping(value = "/companyjob", produces = { "application/json" })
     public String getCompanyJob(@RequestParam(required = true) String jdmJobDescHistoryID) throws Exception {
-    	System.out.println("getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
+    	log.info("getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
     	
     	//check memory cache
     	CompanyJobDetails cacheDeets = CompAnalystController.jobDetailsCache.get(jdmJobDescHistoryID);
@@ -275,17 +256,19 @@ public class CompAnalystController {
     				fetchedDeets = JsonUtil.jsonToJobDetails(s);
     				fetchedDeets.setCachedDate(new Date());
     				
-    				if (dbDeets != null) {
-    					jobDetailsRepo.delete(dbDeets);
+    				if (dbDeets != null) {    
+    					//delete the old one
+    					saveDeleteCompanyJobDetails(dbDeets, false);
     				}
-    				dbDeets = jobDetailsRepo.save(fetchedDeets);
+    				//save the new one
+    				dbDeets = saveDeleteCompanyJobDetails(fetchedDeets, true);
 
     			} catch(Exception e) {
     				// something went wrong: 
     				e.printStackTrace();
+    				log.error("something went wrong fetching job details", e);
     				if (dbDeets == null) {
-    					// not recoverable
-    					throw new Exception("failed to fetch data from salary.com", e);
+    					throw new Exception("something unrecoverable went wrong fetching job details", e);
     				} 
     			}     	
     		}
@@ -296,23 +279,65 @@ public class CompAnalystController {
     	return json;
     }
     
+	private String fetchJobList() throws Exception {
+		log.info("fetchJobList()...");
+    	String url = COMPURL_COMPANYJOBLIST
+				+ "?IsReturnLastApprovedVersion=1"
+				+ "&IsReturnUDFs=1"
+				+ "&ReturnUDFFields=Large%20Functional%20Group" 
+					+ SEPARATOR + "Job%20Family" 
+					+ SEPARATOR + "FLSA%20Classification" 
+					+ SEPARATOR + "Pay%20Grade" 
+					+ SEPARATOR + "Organization";
+		String companyJobList =  getJson(url);
+    	if (companyJobList.indexOf("<!DOCTYPE html>") > -1) {
+    		throw new Exception("Problem fetching companyjoblist from CompAnalyst API");
+    	}    		
+		return companyJobList;
+	}
+	
+	private String fetchCompanyJobDetails(String jdmJobDescHistoryID) throws Exception {
+		log.info("--------========= fetchCompanyJobDetails: " + jdmJobDescHistoryID);
+		jdmJobDescHistoryID = URLEncoder.encode(jdmJobDescHistoryID, StandardCharsets.UTF_8);
+		String url = COMPURL_COMPANYJOB +  jdmJobDescHistoryID;
+		String json = this.getJson(url);
+		log.trace("fetched jobDetails: " + json);
+    	if (json.indexOf("<!DOCTYPE html>") > -1) {
+    		throw new Exception("Problem fetching jobDetails from CompAnalyst API");
+    	}
+    	json = JsonUtil.replaceSpacesInKeys(json);
+		return json;
+	}
+
+
     private synchronized String getJson(String url) throws Exception {
-    	System.out.println("OUTGOING URL: " + url);
+    	log.info("getJson() OUTGOING URL: " + url);
     	HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = new HttpGet(url);
         get.setHeader("Content-Type", "application/json");
-        checkApiAuthentication();
+        getApiToken();
         get.addHeader("token", authToken);
         HttpResponse response = client.execute(get);
         String result = EntityUtils.toString(response.getEntity());
-        System.out.println("getJson result: " + result);
+        log.info("getJson result: " + result);
         return result;
     }
     
-	private void checkApiAuthentication() {
-        getApiToken();
+	private synchronized Iterable<CompanyJob> saveCompanyJobs(List<CompanyJob> jobs) {
+		Iterable<CompanyJob> saved = jobSummaryRepo.saveAll(jobs);
+		return saved;
 	}
-	
 
+	private synchronized CompanyJobDetails saveDeleteCompanyJobDetails(CompanyJobDetails jobDetails, boolean save) {
+		if (save) {
+			CompanyJobDetails saved = jobDetailsRepo.save(jobDetails);
+			return saved;		
+			
+		} else {
+			jobDetailsRepo.delete(jobDetails);
+			return null;
+		}
+
+	}
 
 } 

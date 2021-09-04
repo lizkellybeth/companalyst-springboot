@@ -1,8 +1,4 @@
-
-  
-  .example-form {
-    min-widthx: 150px;
-    max-widthx: 500px;
+.example-form {
     display: flex;
   }
   
@@ -20,7 +16,6 @@
   
   #search-fieldxx{
     display: inline-block;
-    widthxxx: 40%;
   }
   
   #filter-fieldxx{
@@ -30,7 +25,6 @@
   
   #btn-divx{
     display: inline-block;
-    floatx: right;
   }
   
   #divJobSearch:after {
@@ -110,9 +104,6 @@
     padding: 8px;
   }
 
-  mat-chip-list{
-
-  }
 
   mat-chip{
     display:inline-flex;
