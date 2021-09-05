@@ -64,9 +64,9 @@ mat-card {
 }
 
 .expandIcon {
-    background-image: url('/assets/expand-sm.png');
+    background-image: url('/companalyst/assets/expand-sm.png');
 }
 
 .collapseIcon {
-    background-image: url('/assets/collapse-sm.png');
+    background-image: url('/companalyst/assets/collapse-sm.png');
 }
