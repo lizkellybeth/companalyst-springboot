@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
@@ -52,7 +53,7 @@ import edu.nrao.companalyst.data.JsonUtil;
 @EntityScan("edu.nrao.companalyst.data")
 @EnableJpaRepositories("edu.nrao.companalyst.data")
 public class CompAnalystController {
-
+	
 	@Value("${companalyst.url.getapitoken}")
 	private String COMPURL_GETAPITOKEN;
 	
@@ -68,9 +69,12 @@ public class CompAnalystController {
 	@Value("${companalyst.auth.password}")
     private String password;
 	
-    private String authToken;
+	private AuthToken authToken;
+    private String tokenString;
     private Date expireDate;//ignore this, just get a new one
     
+	public long MAX_AGE = 12;//hours
+
 	private static HashMap<String, CompanyJobDetails> jobDetailsCache = new HashMap<>();
 	private static String joblist;
 	
@@ -78,7 +82,9 @@ public class CompAnalystController {
     
     private final static String SEPARATOR= "%7C%7C%7C";
     
-    private Date lastJobListUpdate = null;
+    private Date lastJobListUpdate = new Date();
+    
+    private boolean errorCondition = false;
         
     @Autowired
     private JobDetailsRepo jobDetailsRepo;
@@ -97,19 +103,37 @@ public class CompAnalystController {
 	}
 
 	@PostConstruct
-	public void init()  {
+	public synchronized void init()  {
 		try {
-			syncDatabase();
-			lastJobListUpdate = new Date();
+			RefreshCacheRunnable refresher = new RefreshCacheRunnable();
+			Thread t = new Thread(refresher);
+			t.start();
 			
 		} catch (Exception e) {
-			// DB synch failed
+			errorCondition = true;
 			e.printStackTrace();
-			log.error("syncDatabase() failed during initialization!", e);
+			log.error("initialization failed!", e);
 		}
 	}
 	
-    private synchronized void syncDatabase() throws Exception {
+    private class RefreshCacheRunnable implements Runnable {
+		@Override
+		public void run() {
+			try {
+				syncJobList();
+				syncJobDetails();
+				lastJobListUpdate = new Date();
+				errorCondition = false;
+				
+			} catch (Exception e) {
+				errorCondition = true;
+				e.printStackTrace();
+				log.error("initialization failed!", e);
+			}
+		}
+    }
+	
+	private synchronized void syncJobList() throws Exception {
     	log.info("prepareCache...");
 		List<CompanyJob> cachedJobs = new ArrayList<>();
     	
@@ -117,26 +141,26 @@ public class CompAnalystController {
 		List<CompanyJob> dbJobs = jobSummaryRepo.findAll();
     	
     	// fetch latest data from comp analyst...
-    	List<CompanyJob> fJobs =  new ArrayList<>();
+    	List<CompanyJob> fetchedJobs =  new ArrayList<>();
 		try {
 			List<CompanyJob> matches = new ArrayList<>();
 			List<CompanyJob> updates = new ArrayList<>();
 			List<CompanyJob> deletes = new ArrayList<>();
 			List<CompanyJob> insertions = new ArrayList<>();
 			String companyJobList = fetchJobList();	
-			fJobs = JsonUtil.parseCompanyJobs(companyJobList);	
-			for (CompanyJob fJob: fJobs) {
+			fetchedJobs = JsonUtil.parseCompanyJobs(companyJobList);	
+			for (CompanyJob fetchedJob: fetchedJobs) {
 				for (CompanyJob dbJob: dbJobs) {
-					if (fJob.equals(dbJob) ) {
-						matches.add(fJob);
-						String newDt = fJob.getLastUpdateDate();
+					if (fetchedJob.equals(dbJob) ) {
+						matches.add(fetchedJob);
+						String newDt = fetchedJob.getLastUpdateDate();
 						String oldDt = dbJob.getLastUpdateDate();
 						SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yyyy");
 						Date newDate = formatter.parse(newDt);
 						Date oldDate = formatter.parse(oldDt);
 						if (newDate.after(oldDate)) {
 							// an update has occurred
-							updates.add(fJob);
+							updates.add(fetchedJob);
 							
 						} else {
 							// no update, do nothing
@@ -151,24 +175,24 @@ public class CompAnalystController {
 			saveCompanyJobs(updates);
 
 			// new jobs are inserted
-			for (CompanyJob fJob: fJobs) {
-				if (!matches.contains(fJob)) {
-					insertions.add(fJob);
+			for (CompanyJob fetchedJob: fetchedJobs) {
+				if (!matches.contains(fetchedJob)) {
+					insertions.add(fetchedJob);
 				}				
 			}
 			saveCompanyJobs(insertions);
 			
 			// jobs removed upstream at salary.com are marked for deletion in local DB
-			for (CompanyJob dJob: dbJobs) {
-				if (!matches.contains(dJob)) {
+			for (CompanyJob dbJob: dbJobs) {
+				if (!matches.contains(dbJob)) {
 					// this has been deleted upstream
-					deletes.add(dJob);
-					dJob.setMarkedForDeletion(true);
+					dbJob.setMarkedForDeletion(true);
+					deletes.add(dbJob);
 				}
 			}
 			saveCompanyJobs(deletes);
 			
-			// re-check the repo to get updates
+			// re-check the repo to get the updates
 			dbJobs = jobSummaryRepo.findAll();
 			for (CompanyJob job: dbJobs) {
 				if (!job.isMarkedForDeletion()) {
@@ -186,6 +210,48 @@ public class CompAnalystController {
 		
 		joblist = JsonUtil.stringifyJobList(cachedJobs);		
 	}
+
+    private synchronized void syncJobDetails() throws Exception {
+		// TODO Auto-generated method stub
+		List<CompanyJob> jobs = jobSummaryRepo.findAll();
+		for (CompanyJob job: jobs) {
+			log.info("synching details for job: " + job.getCompanyJobCode() + " || " + job.getCompanyJobTitle());
+			String jdmJobDescHistoryID = job.getJDMJobDescHistoryID();
+			boolean markedForDeletion = job.isMarkedForDeletion();
+			CompanyJobDetails details = jobDetailsRepo.findByJDMJobDescHistoryID(jdmJobDescHistoryID);
+			if (markedForDeletion) {
+				saveDeleteCompanyJobDetails(details, false);
+				CompAnalystController.jobDetailsCache.remove(jdmJobDescHistoryID);
+				
+			} else {
+				String json = null;
+				if (details == null) {
+					json = fetchCompanyJobDetails(jdmJobDescHistoryID);
+					details = JsonUtil.jsonToJobDetails(json);
+					details.setCachedDate(new Date());
+					saveDeleteCompanyJobDetails(details, true);
+				} else {
+					if (details.isStale()) {// try to fetch a fresh one...
+						json = fetchCompanyJobDetails(jdmJobDescHistoryID);
+						if (json != null){// don't delete the cache unless we can fetch a new one!
+							saveDeleteCompanyJobDetails(details, false);//delete the old one
+							details = JsonUtil.jsonToJobDetails(json);
+							details.setCachedDate(new Date());
+							saveDeleteCompanyJobDetails(details, true);//save the new one
+						}
+					}				
+				}
+				CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, details);
+			}
+		}
+	}
+    
+    private String checkAuthentication() throws Exception {
+    	if (authToken == null) {
+    		String apiToken = getApiToken();
+    	}
+    	return null;
+    }
 
 	@RequestMapping(value = "/getapitoken", produces = { "application/json" })
     public synchronized String getApiToken() throws Exception {
@@ -207,7 +273,7 @@ public class CompAnalystController {
             String result = EntityUtils.toString(response.getEntity());
             log.trace("result: " + result); 
             JSONObject jobj = new JSONObject(result);
-            authToken = (String) jobj.get("token");
+            tokenString = (String) jobj.get("token");
             String expires = (String) jobj.get("expire_date");
             SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
             expireDate = sdf.parse(expires);
@@ -226,8 +292,18 @@ public class CompAnalystController {
     public String getCompanyJobList() throws Exception {
 		log.info("getCompanyJobList()..." );
     	if (joblist == null) {
-    		log.error("joblist not initialized!");
-    		throw new Exception("joblist not initialized.");
+    		log.error("joblist not yet initialized!");
+    		init();
+    		throw new Exception("joblist not yet initialized!");
+    	} else {
+    		Date now = new Date();
+    	    long diffInMillies = Math.abs(now.getTime() - lastJobListUpdate.getTime());
+    	    long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+    	    if (diff > MAX_AGE) {
+    	    	log.warn("joblist is stale!");
+    	    	// re-initialize, but don't make the user wait...
+    	    	init();
+    	    }
     	}
     	return joblist;
     }
@@ -320,7 +396,7 @@ public class CompAnalystController {
         HttpGet get = new HttpGet(url);
         get.setHeader("Content-Type", "application/json");
         getApiToken();
-        get.addHeader("token", authToken);
+        get.addHeader("token", tokenString);
         HttpResponse response = client.execute(get);
         String result = EntityUtils.toString(response.getEntity());
         log.info("getJson result: " + result);

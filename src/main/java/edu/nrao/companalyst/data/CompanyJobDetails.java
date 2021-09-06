@@ -24,7 +24,8 @@ public class CompanyJobDetails {
 	private String CompanyJobCode;
 	private String CompanyJobTitle;
 	
-	@Column(length = 3000) 
+	@Lob 
+	@Column(columnDefinition="BLOB")
 	private String CompanyJobSummary;
 	
 	private String LastApprovedByUName;
@@ -80,6 +81,8 @@ public class CompanyJobDetails {
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private Long id;
 	
+	private boolean markedForDeletion = false;
+
 	private Date cachedDate;
 
 	public CompanyJobDetails() {
@@ -159,7 +162,6 @@ public class CompanyJobDetails {
 	}
 
 	public boolean isStale() {
-
 		Date now = new Date();
 	    long diffInMillies = Math.abs(now.getTime() - cachedDate.getTime());
 	    long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
@@ -403,6 +405,14 @@ public class CompanyJobDetails {
 
 	public void setUDF_Physical_Requirements(String uDF_Physical_Requirements) {
 		UDF_Physical_Requirements = uDF_Physical_Requirements;
+	}
+
+	public boolean isMarkedForDeletion() {
+		return markedForDeletion;
+	}
+
+	public void setMarkedForDeletion(boolean markedForDeletion) {
+		this.markedForDeletion = markedForDeletion;
 	}
 
 
