@@ -3,6 +3,7 @@ package edu.nrao.companalyst;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -215,45 +216,81 @@ public class CompAnalystController {
 		// TODO Auto-generated method stub
 		List<CompanyJob> jobs = jobSummaryRepo.findAll();
 		for (CompanyJob job: jobs) {
-			log.info("synching details for job: " + job.getCompanyJobCode() + " || " + job.getCompanyJobTitle());
-			String jdmJobDescHistoryID = job.getJDMJobDescHistoryID();
-			boolean markedForDeletion = job.isMarkedForDeletion();
-			CompanyJobDetails details = jobDetailsRepo.findByJDMJobDescHistoryID(jdmJobDescHistoryID);
-			if (markedForDeletion) {
-				saveDeleteCompanyJobDetails(details, false);
-				CompAnalystController.jobDetailsCache.remove(jdmJobDescHistoryID);
-				
-			} else {
-				String json = null;
-				if (details == null) {
-					json = fetchCompanyJobDetails(jdmJobDescHistoryID);
-					details = JsonUtil.jsonToJobDetails(json);
-					details.setCachedDate(new Date());
-					saveDeleteCompanyJobDetails(details, true);
+			try {
+				log.info("synching details for job: " + job.getCompanyJobCode() + " || " + job.getCompanyJobTitle());
+				String jdmJobDescHistoryID = job.getJDMJobDescHistoryID();
+				boolean markedForDeletion = job.isMarkedForDeletion();
+				CompanyJobDetails details = jobDetailsRepo.findByJDMJobDescHistoryID(jdmJobDescHistoryID);
+				if (markedForDeletion) {
+					saveDeleteCompanyJobDetails(details, false);
+					CompAnalystController.jobDetailsCache.remove(jdmJobDescHistoryID);
+
 				} else {
-					if (details.isStale()) {// try to fetch a fresh one...
+					String json = null;
+					if (details == null) {
 						json = fetchCompanyJobDetails(jdmJobDescHistoryID);
-						if (json != null){// don't delete the cache unless we can fetch a new one!
-							saveDeleteCompanyJobDetails(details, false);//delete the old one
-							details = JsonUtil.jsonToJobDetails(json);
-							details.setCachedDate(new Date());
-							saveDeleteCompanyJobDetails(details, true);//save the new one
-						}
-					}				
+						details = JsonUtil.jsonToJobDetails(json);
+						details.setCachedDate(new Date());
+						saveDeleteCompanyJobDetails(details, true);
+					} else {
+						if (details.isStale()) {// try to fetch a fresh one...
+							json = fetchCompanyJobDetails(jdmJobDescHistoryID);
+							if (json != null){// don't delete the cache unless we can fetch a new one!
+								saveDeleteCompanyJobDetails(details, false);//delete the old one
+								details = JsonUtil.jsonToJobDetails(json);
+								details.setCachedDate(new Date());
+								saveDeleteCompanyJobDetails(details, true);//save the new one
+							}
+						}				
+					}
+					CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, details);
 				}
-				CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, details);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error("Error synching job details for :" + job.getJDMJobDescHistoryID());
 			}
 		}
 	}
     
-    private String checkAuthentication() throws Exception {
-    	if (authToken == null) {
-    		String apiToken = getApiToken();
+	@RequestMapping(value = "/getapitoken", produces = { "application/json" })
+    public synchronized String checkAuthentication() throws Exception {
+		log.info("checkAuthentication()..." );
+    	if (authToken == null || authToken.isExpired()) {
+    		authToken = fetchApiToken();
     	}
-    	return null;
+    	JSONObject obj = new JSONObject(authToken);
+    	String resp = obj.toString();
+    	return resp;
     }
 
-	@RequestMapping(value = "/getapitoken", produces = { "application/json" })
+	private synchronized AuthToken fetchApiToken() throws Exception {
+		log.info("fetchApiToken()..." );
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpPost post = new HttpPost(COMPURL_GETAPITOKEN);
+        post.setHeader("Content-Type", "application/json");
+
+        HashMap<String, String> map = new HashMap<String, String>();
+		map.put("username", username);	
+		map.put("password", password);	
+        JSONObject obj = new JSONObject(map);
+        String json = obj.toString();
+        HttpEntity entity = new ByteArrayEntity(json.getBytes("UTF-8"));
+        post.setEntity(entity);
+        
+        HttpResponse response = client.execute(post);
+        String result = EntityUtils.toString(response.getEntity());
+        log.trace("result: " + result); 
+        JSONObject jobj = new JSONObject(result);
+        tokenString = (String) jobj.get("token");
+        String expires = (String) jobj.get("expire_date");
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
+        expireDate = sdf.parse(expires);
+		AuthToken token = new AuthToken(tokenString, expireDate);
+		return token;
+	}
+
+	/*
     public synchronized String getApiToken() throws Exception {
 		log.info("getApiToken()..." );
         try {
@@ -286,7 +323,8 @@ public class CompAnalystController {
             throw new Exception("could not get API token.");
         }
     }
-
+    */
+	
 	//example http://localhost:10001/companyjoblist
     @RequestMapping(value = "/companyjoblist", produces = { "application/json" })
     public String getCompanyJobList() throws Exception {
@@ -395,7 +433,7 @@ public class CompAnalystController {
     	HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = new HttpGet(url);
         get.setHeader("Content-Type", "application/json");
-        getApiToken();
+        checkAuthentication();
         get.addHeader("token", tokenString);
         HttpResponse response = client.execute(get);
         String result = EntityUtils.toString(response.getEntity());
