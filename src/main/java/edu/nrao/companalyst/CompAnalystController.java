@@ -86,6 +86,8 @@ public class CompAnalystController {
     private Date lastJobListUpdate = new Date();
     
     private boolean errorCondition = false;
+    
+    private volatile boolean initFinished = false;
         
     @Autowired
     private JobDetailsRepo jobDetailsRepo;
@@ -104,16 +106,20 @@ public class CompAnalystController {
 	}
 
 	@PostConstruct
-	public synchronized void init()  {
+	public synchronized void init() throws Exception  {
 		try {
-			RefreshCacheRunnable refresher = new RefreshCacheRunnable();
-			Thread t = new Thread(refresher);
-			t.start();
+			initFinished = false;
+			syncJobList();
+			syncJobDetails();
+			lastJobListUpdate = new Date();
+			errorCondition = false;
+			initFinished = true;
 			
 		} catch (Exception e) {
 			errorCondition = true;
 			e.printStackTrace();
 			log.error("initialization failed!", e);
+			throw new Exception("init failed!", e);
 		}
 	}
 	
@@ -121,10 +127,7 @@ public class CompAnalystController {
 		@Override
 		public void run() {
 			try {
-				syncJobList();
-				syncJobDetails();
-				lastJobListUpdate = new Date();
-				errorCondition = false;
+				init();
 				
 			} catch (Exception e) {
 				errorCondition = true;
@@ -253,6 +256,7 @@ public class CompAnalystController {
 		}
 	}
     
+    
 	@RequestMapping(value = "/getapitoken", produces = { "application/json" })
     public synchronized String checkAuthentication() throws Exception {
 		log.info("checkAuthentication()..." );
@@ -263,8 +267,9 @@ public class CompAnalystController {
     	String resp = obj.toString();
     	return resp;
     }
+    
 
-	private synchronized AuthToken fetchApiToken() throws Exception {
+	public synchronized AuthToken fetchApiToken() throws Exception {
 		log.info("fetchApiToken()..." );
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(COMPURL_GETAPITOKEN);
@@ -290,48 +295,13 @@ public class CompAnalystController {
 		return token;
 	}
 
-	/*
-    public synchronized String getApiToken() throws Exception {
-		log.info("getApiToken()..." );
-        try {
-            HttpClient client = HttpClientBuilder.create().build();
-            HttpPost post = new HttpPost(COMPURL_GETAPITOKEN);
-            post.setHeader("Content-Type", "application/json");
-
-            HashMap<String, String> map = new HashMap<String, String>();
-			map.put("username", username);	
-			map.put("password", password);	
-	        JSONObject obj = new JSONObject(map);
-	        String json = obj.toString();
-	        HttpEntity entity = new ByteArrayEntity(json.getBytes("UTF-8"));
-	        post.setEntity(entity);
-            
-            HttpResponse response = client.execute(post);
-            String result = EntityUtils.toString(response.getEntity());
-            log.trace("result: " + result); 
-            JSONObject jobj = new JSONObject(result);
-            tokenString = (String) jobj.get("token");
-            String expires = (String) jobj.get("expire_date");
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss a");
-            expireDate = sdf.parse(expires);
-            String output = jobj.toString();
-            return output;
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("could not get API token", e);
-            throw new Exception("could not get API token.");
-        }
-    }
-    */
 	
 	//example http://localhost:10001/companyjoblist
     @RequestMapping(value = "/companyjoblist", produces = { "application/json" })
-    public String getCompanyJobList() throws Exception {
+    public synchronized String getCompanyJobList() throws Exception {
 		log.info("getCompanyJobList()..." );
     	if (joblist == null) {
     		log.error("joblist not yet initialized!");
-    		init();
     		throw new Exception("joblist not yet initialized!");
     	} else {
     		Date now = new Date();
@@ -348,7 +318,7 @@ public class CompAnalystController {
     
     //example http://localhost:10001/companyjob?jdmJobDescHistoryID=2877
     @RequestMapping(value = "/companyjob", produces = { "application/json" })
-    public String getCompanyJob(@RequestParam(required = true) String jdmJobDescHistoryID) throws Exception {
+    public synchronized String getCompanyJob(@RequestParam(required = true) String jdmJobDescHistoryID) throws Exception {
     	log.info("getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
     	
     	//check memory cache
@@ -368,7 +338,8 @@ public class CompAnalystController {
     			}		
     		}
     		
-    		if (needToFetch) {
+    		if ((needToFetch) && initFinished) {
+    			log.info("========= fetchCompanyJobDetails: needToFetch|initFinished" + needToFetch + " | " + initFinished);
     			try {
     				String s = fetchCompanyJobDetails(jdmJobDescHistoryID);
     				fetchedDeets = JsonUtil.jsonToJobDetails(s);
@@ -389,7 +360,8 @@ public class CompAnalystController {
     					throw new Exception("something unrecoverable went wrong fetching job details", e);
     				} 
     			}     	
-    		}
+    		} 
+    		
         	CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, dbDeets);
         	cacheDeets = dbDeets;    		
     	}
@@ -397,7 +369,7 @@ public class CompAnalystController {
     	return json;
     }
     
-	private String fetchJobList() throws Exception {
+	private synchronized String fetchJobList() throws Exception {
 		log.info("fetchJobList()...");
     	String url = COMPURL_COMPANYJOBLIST
 				+ "?IsReturnLastApprovedVersion=1"
@@ -408,21 +380,15 @@ public class CompAnalystController {
 					+ SEPARATOR + "Pay%20Grade" 
 					+ SEPARATOR + "Organization";
 		String companyJobList =  getJson(url);
-    	if (companyJobList.indexOf("<!DOCTYPE html>") > -1) {
-    		throw new Exception("Problem fetching companyjoblist from CompAnalyst API");
-    	}    		
 		return companyJobList;
 	}
 	
-	private String fetchCompanyJobDetails(String jdmJobDescHistoryID) throws Exception {
+	private synchronized String fetchCompanyJobDetails(String jdmJobDescHistoryID) throws Exception {
 		log.info("--------========= fetchCompanyJobDetails: " + jdmJobDescHistoryID);
 		jdmJobDescHistoryID = URLEncoder.encode(jdmJobDescHistoryID, StandardCharsets.UTF_8);
 		String url = COMPURL_COMPANYJOB +  jdmJobDescHistoryID;
 		String json = this.getJson(url);
 		log.trace("fetched jobDetails: " + json);
-    	if (json.indexOf("<!DOCTYPE html>") > -1) {
-    		throw new Exception("Problem fetching jobDetails from CompAnalyst API");
-    	}
     	json = JsonUtil.replaceSpacesInKeys(json);
 		return json;
 	}
@@ -436,6 +402,10 @@ public class CompAnalystController {
         checkAuthentication();
         get.addHeader("token", tokenString);
         HttpResponse response = client.execute(get);
+        int code = response.getStatusLine().getStatusCode();
+        if (code != 200) {
+        	throw new Exception("Exception code in HTTP response: " + code);
+        }
         String result = EntityUtils.toString(response.getEntity());
         log.info("getJson result: " + result);
         return result;

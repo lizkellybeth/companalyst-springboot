@@ -13,7 +13,7 @@
 
           <ng-container matColumnDef="CompanyJobCode">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Job Code </th>
-            <td mat-cell *matCellDef="let element"> {{element.CompanyJobCode}} </td>
+            <td #toggleIcon class="toggleIcon expandIcon" mat-cell *matCellDef="let element"> {{element.CompanyJobCode}} </td>
           </ng-container>
 
           <ng-container matColumnDef="CompanyJobTitle">
@@ -63,7 +63,7 @@
 
           <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
             [class.example-expanded-row]="expandedElement === element"
-            (click)="expandedElement = expandedElement === element ? null : element; fetchJobDetails(element.JDMJobDescHistoryID)">
+            (click)="expandedElement = expandedElement === element ? null : element; fetchJobDetails(element.JDMJobDescHistoryID); toggleCollapse($event.target)">
           </tr>
 
           <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>

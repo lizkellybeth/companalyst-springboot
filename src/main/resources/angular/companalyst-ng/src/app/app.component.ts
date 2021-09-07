@@ -45,7 +45,7 @@ export class AppComponent implements OnInit, AfterViewInit{
           if (job.UDF_Organization.indexOf("NRAO") > -1){
             this.companyJobs.push(job);
           } else {
-            console.log("job.UDF_Organization: " + job.UDF_Organization);
+            //console.log("job.UDF_Organization: " + job.UDF_Organization);
           }
         }
         this.companyJobs = [...this.companyJobs];

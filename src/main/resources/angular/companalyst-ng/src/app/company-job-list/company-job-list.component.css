@@ -235,3 +235,17 @@ tr.example-element-row:not(.example-expanded-row):active {
 .example-element-description-attribution {
   opacity: 0.5;
 }
+
+.toggleIcon {
+  width: 50px;
+  background-repeat: no-repeat;
+  text-align: left;
+}
+ 
+.expandIcon {
+  background-image: url('/companalyst/assets/images/expand-sm.png');
+}
+ 
+.collapseIcon {
+  background-image: url('/companalyst/assets/images/collapse-sm.png');
+}

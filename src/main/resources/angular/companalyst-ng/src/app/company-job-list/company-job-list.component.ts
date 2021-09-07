@@ -145,4 +145,11 @@ export class CompanyJobListComponent implements AfterViewInit, OnChanges {
     this.selectedJDMJobDescHistoryID = jdmJobDescHistoryID;
   }
 
+  toggleCollapse(target){
+    //console.log("target: " + target);
+    let td = <HTMLTableCellElement> target.closest('tr').childNodes.item(0); 
+    //console.log("This row ID is " + td.innerHTML);
+    td.classList.toggle("collapseIcon");
+  }
+
 }
