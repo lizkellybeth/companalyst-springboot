@@ -71,10 +71,11 @@ public class CompAnalystController {
     private String password;
 	
 	private AuthToken authToken;
+	
     private String tokenString;
     private Date expireDate;//ignore this, just get a new one
     
-	public long MAX_AGE = 12;//hours
+	public long MAX_AGE = 24;//hours
 
 	private static HashMap<String, CompanyJobDetails> jobDetailsCache = new HashMap<>();
 	private static String joblist;
@@ -85,9 +86,7 @@ public class CompAnalystController {
     
     private Date lastJobListUpdate = new Date();
     
-    private boolean errorCondition = false;
-    
-    private volatile boolean initFinished = false;
+    private volatile boolean initIsRunning = true;
         
     @Autowired
     private JobDetailsRepo jobDetailsRepo;
@@ -107,38 +106,139 @@ public class CompAnalystController {
 
 	@PostConstruct
 	public synchronized void init() throws Exception  {
-		try {
-			initFinished = false;
-			syncJobList();
-			syncJobDetails();
-			lastJobListUpdate = new Date();
-			errorCondition = false;
-			initFinished = true;
-			
-		} catch (Exception e) {
-			errorCondition = true;
-			e.printStackTrace();
-			log.error("initialization failed!", e);
-			throw new Exception("init failed!", e);
-		}
+    	log.info("PostConstruct - init()..." );
+		Thread t = new Thread(new RefreshCacheRunnable());
+		t.start();			
 	}
 	
     private class RefreshCacheRunnable implements Runnable {
 		@Override
 		public void run() {
+			doInit();
+		}
+		private synchronized void doInit() {
 			try {
-				init();
+				log.info("RefreshCacheRunnable.doInit() thread...");
+				initIsRunning = true;
+				syncJobList();
+				syncJobDetails();
+				lastJobListUpdate = new Date();
+				initIsRunning = false;
 				
 			} catch (Exception e) {
-				errorCondition = true;
+				initIsRunning = false;
 				e.printStackTrace();
 				log.error("initialization failed!", e);
 			}
 		}
     }
 	
+	//provides a way to initialize the cache on demand, without restarting, sets MAX_AGE (hours) for cache
+	@RequestMapping(value = "/initcache", produces = { "text/plain" })
+    public String initcache(@RequestParam(required = false) Long maxage) {
+    	log.info("initcache() maxage parameter: [" + maxage + "]");
+		try {
+	    	if ((maxage != null) && (maxage > 0)) {
+	    		MAX_AGE = maxage;
+	    	}
+	    	if (!initIsRunning) {
+	    		log.info("initcache() starting new RefreshCacheRunnable thread...");
+	    		Thread t = new Thread(new RefreshCacheRunnable());
+	    		t.start();			
+	    	} else {
+	    		log.info("initcache() - RefreshCacheRunnable thread already running.");
+	    	}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("initcache error", e);
+			return e.toString();
+		}
+		String out = "MAX_AGE: " + MAX_AGE;
+		return out;
+    }
+    
+	//example http://localhost:10001/companyjoblist
+    @RequestMapping(value = "/companyjoblist", produces = { "application/json" })
+    public String getCompanyJobList() throws Exception {
+		log.info("getCompanyJobList()..." );
+    	if (joblist == null) {
+    		log.error("something is wrong! joblist not yet initialized!");
+	    	Thread t = new Thread(new RefreshCacheRunnable());
+	    	t.start();
+
+    	} else {
+    		Date now = new Date();
+    	    long diffInMillies = Math.abs(now.getTime() - lastJobListUpdate.getTime());
+    	    long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+    	    if (diff > MAX_AGE) {
+    	    	log.warn("joblist is stale!");
+    	    	// re-initialize, but don't make the user wait...
+    	    	Thread t = new Thread(new RefreshCacheRunnable());
+    	    	t.start();
+    	    }
+    	}
+    	return joblist;
+    }
+    
+    //example http://localhost:10001/companyjob?jdmJobDescHistoryID=2877
+    @RequestMapping(value = "/companyjob", produces = { "application/json" })
+    public String getCompanyJob(@RequestParam(required = true) String jdmJobDescHistoryID) throws Exception {
+    	log.info(" =========  getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
+    	
+    	//check memory cache
+    	CompanyJobDetails cacheDeets = CompAnalystController.jobDetailsCache.get(jdmJobDescHistoryID);
+    	CompanyJobDetails dbDeets = null;
+    	CompanyJobDetails fetchedDeets = null;
+    	
+    	boolean needToFetch = false;
+    	
+    	if ((cacheDeets == null) || (cacheDeets.isStale())){	    		
+    		dbDeets = jobDetailsRepo.findByJDMJobDescHistoryID(jdmJobDescHistoryID);   		
+    		if (dbDeets == null) {
+    			needToFetch = true;
+    		} else {
+    			if (dbDeets.isStale()) {
+        			needToFetch = true;
+    			}		
+    		}
+    		
+			log.info("fetchCompanyJobDetails: needToFetch|initFinished" + needToFetch + " | " + initIsRunning);
+    		if (needToFetch && (!initIsRunning) ) {
+    			try {
+    				String s = fetchCompanyJobDetails(jdmJobDescHistoryID);
+    				fetchedDeets = JsonUtil.jsonToJobDetails(s);
+    				fetchedDeets.setCachedDate(new Date());
+    				
+    				if (dbDeets != null) {    
+    					//delete the old one
+    					saveDeleteCompanyJobDetails(dbDeets, false);
+    				}
+    				//save the new one
+    				dbDeets = saveDeleteCompanyJobDetails(fetchedDeets, true);
+
+    			} catch(Exception e) {
+    				// something went wrong: 
+    				e.printStackTrace();
+    				log.error("something went wrong fetching job details", e);
+    				if (dbDeets == null) {
+    					throw new Exception("something unrecoverable went wrong fetching job details", e);
+    				} 
+    			}     	
+    		} 
+    		
+        	CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, dbDeets);
+        	cacheDeets = dbDeets;   
+        	
+    	} else {
+			log.info(" =========  getCompanyJob() from CACHE");
+    	}
+    	String json = JsonUtil.stringifyJobDetails(cacheDeets);    	
+    	return json;
+    }
+    
 	private synchronized void syncJobList() throws Exception {
-    	log.info("prepareCache...");
+    	log.info("syncJobList...");
 		List<CompanyJob> cachedJobs = new ArrayList<>();
     	
 		// query jobs already in DB...
@@ -216,7 +316,7 @@ public class CompAnalystController {
 	}
 
     private synchronized void syncJobDetails() throws Exception {
-		// TODO Auto-generated method stub
+    	log.info("syncJobDetails...");
 		List<CompanyJob> jobs = jobSummaryRepo.findAll();
 		for (CompanyJob job: jobs) {
 			try {
@@ -253,12 +353,11 @@ public class CompAnalystController {
 				e.printStackTrace();
 				log.error("Error synching job details for :" + job.getJDMJobDescHistoryID());
 			}
+			Thread.sleep(200);
 		}
 	}
-    
-    
-	@RequestMapping(value = "/getapitoken", produces = { "application/json" })
-    public synchronized String checkAuthentication() throws Exception {
+    	
+    private synchronized String checkAuthentication() throws Exception {
 		log.info("checkAuthentication()..." );
     	if (authToken == null || authToken.isExpired()) {
     		authToken = fetchApiToken();
@@ -268,8 +367,7 @@ public class CompAnalystController {
     	return resp;
     }
     
-
-	public synchronized AuthToken fetchApiToken() throws Exception {
+    private synchronized AuthToken fetchApiToken() throws Exception {
 		log.info("fetchApiToken()..." );
         HttpClient client = HttpClientBuilder.create().build();
         HttpPost post = new HttpPost(COMPURL_GETAPITOKEN);
@@ -295,80 +393,6 @@ public class CompAnalystController {
 		return token;
 	}
 
-	
-	//example http://localhost:10001/companyjoblist
-    @RequestMapping(value = "/companyjoblist", produces = { "application/json" })
-    public synchronized String getCompanyJobList() throws Exception {
-		log.info("getCompanyJobList()..." );
-    	if (joblist == null) {
-    		log.error("joblist not yet initialized!");
-    		throw new Exception("joblist not yet initialized!");
-    	} else {
-    		Date now = new Date();
-    	    long diffInMillies = Math.abs(now.getTime() - lastJobListUpdate.getTime());
-    	    long diff = TimeUnit.HOURS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-    	    if (diff > MAX_AGE) {
-    	    	log.warn("joblist is stale!");
-    	    	// re-initialize, but don't make the user wait...
-    	    	init();
-    	    }
-    	}
-    	return joblist;
-    }
-    
-    //example http://localhost:10001/companyjob?jdmJobDescHistoryID=2877
-    @RequestMapping(value = "/companyjob", produces = { "application/json" })
-    public synchronized String getCompanyJob(@RequestParam(required = true) String jdmJobDescHistoryID) throws Exception {
-    	log.info("getCompanyJob() jdmJobDescHistoryID parameter: [" + jdmJobDescHistoryID + "]");
-    	
-    	//check memory cache
-    	CompanyJobDetails cacheDeets = CompAnalystController.jobDetailsCache.get(jdmJobDescHistoryID);
-    	CompanyJobDetails dbDeets = null;
-    	CompanyJobDetails fetchedDeets = null;
-    	
-    	boolean needToFetch = false;
-    	
-    	if ((cacheDeets == null) || (cacheDeets.isStale())){	    		
-    		dbDeets = jobDetailsRepo.findByJDMJobDescHistoryID(jdmJobDescHistoryID);   		
-    		if (dbDeets == null) {
-    			needToFetch = true;
-    		} else {
-    			if (dbDeets.isStale()) {
-        			needToFetch = true;
-    			}		
-    		}
-    		
-    		if ((needToFetch) && initFinished) {
-    			log.info("========= fetchCompanyJobDetails: needToFetch|initFinished" + needToFetch + " | " + initFinished);
-    			try {
-    				String s = fetchCompanyJobDetails(jdmJobDescHistoryID);
-    				fetchedDeets = JsonUtil.jsonToJobDetails(s);
-    				fetchedDeets.setCachedDate(new Date());
-    				
-    				if (dbDeets != null) {    
-    					//delete the old one
-    					saveDeleteCompanyJobDetails(dbDeets, false);
-    				}
-    				//save the new one
-    				dbDeets = saveDeleteCompanyJobDetails(fetchedDeets, true);
-
-    			} catch(Exception e) {
-    				// something went wrong: 
-    				e.printStackTrace();
-    				log.error("something went wrong fetching job details", e);
-    				if (dbDeets == null) {
-    					throw new Exception("something unrecoverable went wrong fetching job details", e);
-    				} 
-    			}     	
-    		} 
-    		
-        	CompAnalystController.jobDetailsCache.put(jdmJobDescHistoryID, dbDeets);
-        	cacheDeets = dbDeets;    		
-    	}
-    	String json = JsonUtil.stringifyJobDetails(cacheDeets);    	
-    	return json;
-    }
-    
 	private synchronized String fetchJobList() throws Exception {
 		log.info("fetchJobList()...");
     	String url = COMPURL_COMPANYJOBLIST
@@ -388,14 +412,14 @@ public class CompAnalystController {
 		jdmJobDescHistoryID = URLEncoder.encode(jdmJobDescHistoryID, StandardCharsets.UTF_8);
 		String url = COMPURL_COMPANYJOB +  jdmJobDescHistoryID;
 		String json = this.getJson(url);
-		log.trace("fetched jobDetails: " + json);
+		log.debug("fetched jobDetails: " + json);
     	json = JsonUtil.replaceSpacesInKeys(json);
 		return json;
 	}
 
 
     private synchronized String getJson(String url) throws Exception {
-    	log.info("getJson() OUTGOING URL: " + url);
+    	log.debug("getJson() OUTGOING URL: " + url);
     	HttpClient client = HttpClientBuilder.create().build();
         HttpGet get = new HttpGet(url);
         get.setHeader("Content-Type", "application/json");
@@ -407,7 +431,7 @@ public class CompAnalystController {
         	throw new Exception("Exception code in HTTP response: " + code);
         }
         String result = EntityUtils.toString(response.getEntity());
-        log.info("getJson result: " + result);
+        log.debug("getJson result: " + result);
         return result;
     }
     
