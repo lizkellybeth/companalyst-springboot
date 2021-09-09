@@ -2,9 +2,21 @@
 
   <div>
     <table id="tblJobDetails" *ngIf="jobDetails != null; else fetching">
-      <tr class="jobDetailsRow" *ngFor="let key of fieldsToShow;">
-        <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
-        <td class="jobDetailsCell">{{jobDetails[key].replace("null", " ")}}</td>
+      <tr class="jobDetailsRow" *ngFor="let key of fieldsToShow;" >
+        <ng-container  *ngIf="key!='UDF_Essential_Duties_and_Responsibilities';then content else other_content">blah</ng-container>
+        <ng-template #content>
+          <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
+          <td class="jobDetailsCell">{{jobDetails[key].replace("null", " ")}}</td>
+        </ng-template>
+        <ng-template #other_content>
+          <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
+          <td class="jobDetailsCell" >
+          <ul class="essUL" *ngFor="let ess of jobDetails['Essential_Responsibilities'];">
+              <li class="essLI" >{{ess}}</li>
+            </ul>
+          </td>
+        </ng-template>
+
       </tr>
     </table>
   

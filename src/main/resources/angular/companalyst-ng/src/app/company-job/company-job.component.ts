@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { Listener } from 'selenium-webdriver';
 import { JobDetails } from '../job-details';
 import { JobDetailsService } from '../job-details.service';
 
@@ -32,8 +33,8 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
     "UDF_Experience_Detail", 
     "UDF_Qualifications_and_Competencies", 
     "UDF_Nature_of_Work", 
-    "UDF_Physical_Requirements"
-  ];
+    "UDF_Physical_Requirements",
+   ];
 
   constructor(private jobDetailsService: JobDetailsService) { }
 
@@ -50,9 +51,14 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
       .then(res => {
         console.log("fetched result: " + (res));
         var details: JobDetails = res as JobDetails;
-        console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
         this.jobDetails = details;
-      })
+        console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
+        var essentialDuties = details.UDF_Essential_Duties_and_Responsibilities.replace(" |||", "");
+        //this.jobDetails.UDF_Essential_Duties_and_Responsibilities = essentialDuties;
+        var bullets: string[] = essentialDuties.split("• ");
+        bullets = this.formatBullets(bullets);
+        this.jobDetails.Essential_Responsibilities = bullets;
+     })
       .catch(err => {
         console.error(err);
       });
@@ -61,6 +67,17 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
   toggleIcon(){
     console.log('toggle!');
     this.expanded = !this.expanded;
+  }
+
+  formatBullets(essentialDuties: string[]): string[] {
+    let output: string[] = [];
+    for (var duty in essentialDuties){
+      if (essentialDuties[duty].length > 0){
+        essentialDuties[duty] = essentialDuties[duty].replace("|||", "");
+        output.push(essentialDuties[duty]);
+      }
+    }
+    return output;
   }
 
 }

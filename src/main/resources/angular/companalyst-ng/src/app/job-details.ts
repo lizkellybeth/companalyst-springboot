@@ -29,7 +29,7 @@ export interface JobDetails {
     UDF_Nature_of_Work: string
     UDF_Physical_Requirements: string
    
-   
+    Essential_Responsibilities: string[];
     
 
 }
