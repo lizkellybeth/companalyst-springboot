@@ -11,8 +11,8 @@
         <ng-template #other_content>
           <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF", "")}}</th>
           <td class="jobDetailsCell" >
-          <ul class="essUL" *ngFor="let ess of jobDetails['Essential_Responsibilities'];">
-              <li class="essLI" >{{ess}}</li>
+          <ul class="no-bullets">
+              <li class="essLI"  *ngFor="let ess of jobDetails['Essential_Responsibilities'];">{{ess}}</li>
             </ul>
           </td>
         </ng-template>

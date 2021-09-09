@@ -70,3 +70,12 @@ mat-card {
 .collapseIcon {
     background-image: url('/companalyst/assets/collapse-sm.png');
 }
+
+ul {
+    padding: 5px; /* Remove padding */
+}
+
+li {
+    margin-left: 5px; /* Remove margins */
+    margin-bottom: 5px;
+  }
