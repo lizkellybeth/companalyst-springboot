@@ -38,11 +38,11 @@ export class AppComponent implements OnInit, AfterViewInit{
         this.companyJobs = [];
         var jobs = res as CompanyJob[];
         for (let job of jobs){
-          var jobFam = job.UDF_Job_Family;
-          if (!this.jobFamilies.includes(jobFam) && jobFam != null && jobFam != 'null'  && jobFam != ''){
-            this.jobFamilies.push(jobFam);
-          }
           if (job.UDF_Organization.indexOf("NRAO") > -1){
+            var jobFam = job.UDF_Job_Family;
+            if (!this.jobFamilies.includes(jobFam) && jobFam != null && jobFam != 'null'  && jobFam != ''){
+              this.jobFamilies.push(jobFam);
+            }
             this.companyJobs.push(job);
           } else {
             //console.log("job.UDF_Organization: " + job.UDF_Organization);
