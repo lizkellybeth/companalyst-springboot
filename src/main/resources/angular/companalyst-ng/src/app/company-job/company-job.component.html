@@ -3,16 +3,16 @@
   <div>
     <table id="tblJobDetails" *ngIf="jobDetails != null; else fetching">
       <tr class="jobDetailsRow" *ngFor="let key of fieldsToShow;" >
-        <!--<ng-container  *ngIf="key!='Essential_Duties_and_Responsibilities';then content else other_content">blah</ng-container>-->
         <ng-container  *ngIf="isBulleted(key);then bulleted else content">blah</ng-container>
         <ng-template #content>
           <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF ", "")}}</th>
-          <td class="jobDetailsCell">{{jobDetails[key]}}</td>
+          <td class="jobDetailsCell" *ngIf="jobDetails[key]!=='null' else empty" >{{jobDetails[key]}}</td>
         </ng-template>
+        <ng-template #empty><td class="jobDetailsCell">&nbsp;</td></ng-template>
         <ng-template #bulleted>
           <th class="jobDetailsHeader">{{key.split("_").join(" ").replace("UDF ", "")}}</th>
           <td class="jobDetailsCell" >
-          <ul class="no-bullets">
+            <ul>
               <li *ngFor="let ess of jobDetails[key]">{{ess}}</li>
             </ul>
           </td>

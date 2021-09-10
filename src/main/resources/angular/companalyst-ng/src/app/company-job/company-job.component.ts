@@ -53,7 +53,7 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
   }
 
   public fetchJobDetails(jdmJobDescHistoryID: string) {
-    console.log("CompanyJobComponent fetchJobDetails! " + jdmJobDescHistoryID)
+    console.log("CompanyJobComponent fetchJobDetails! " + jdmJobDescHistoryID);
     this.jobDetailsService.fetchJobDetails(jdmJobDescHistoryID)
       .then(res => {
         console.log("fetched result: " + (res));
@@ -62,10 +62,12 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
         console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
 
         var field1 = details.UDF_Essential_Duties_and_Responsibilities;
+        field1.replace("null", "");
         var bullets1 = this.formatBullets(field1);
         this.jobDetails.Essential_Duties_and_Responsibilities = bullets1;
 
         var field2 = details.UDF_Qualifications_and_Competencies;
+        field2.replace("null", "");
         var bullets2 = this.formatBullets(field2);
         this.jobDetails.Qualifications_and_Competencies = bullets2;
      })
@@ -77,19 +79,25 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
   formatBullets(field: string): string[] {
     var bullets: string[] = field.split("•");
     let output: string[] = [];
+    if (field.indexOf("null") == -1){
     for (var bul in bullets){
       if (bullets[bul].length > 0){
         bullets[bul] = bullets[bul].replace("|||", "");
         output.push(bullets[bul]);
       }
     }
+  }
     return output;
   }
 
-isBulleted(key){
+isBulleted(keyFromFieldsToShow){
     for (var s in this.fieldsWithBulletList){
-      if (this.fieldsWithBulletList[s].indexOf(String(key)) == 0){
-       return true;
+      if (this.fieldsWithBulletList[s].indexOf(String(keyFromFieldsToShow)) == 0){
+        var list = this.jobDetails[String(keyFromFieldsToShow)];
+        if (list.length > 1){
+          return true;
+
+        }
       }
     }
    return false;
