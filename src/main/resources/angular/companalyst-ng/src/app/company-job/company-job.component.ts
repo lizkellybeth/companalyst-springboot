@@ -108,15 +108,5 @@ isBulleted(keyFromFieldsToShow){
     this.expanded = !this.expanded;
   }
 
-  formatBulletsxxx(bullets: string[]): string[] {
-    let output: string[] = [];
-    for (var bul in bullets){
-      if (bullets[bul].length > 0){
-        bullets[bul] = bullets[bul].replace("|||", "");
-        output.push(bullets[bul]);
-      }
-    }
-    return output;
-  }
 
 }
