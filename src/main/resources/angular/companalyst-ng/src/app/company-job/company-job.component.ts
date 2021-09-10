@@ -28,13 +28,20 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
     "UDF_Minimum_Experience_Requirement", 
     "UDF_Position_Designation", 
     "UDF_Locations_applicable_to_Safety_Sensitive_for_this_position", 
-    "UDF_Essential_Duties_and_Responsibilities", 
+    "Essential_Duties_and_Responsibilities", 
     "UDF_Education_Detail", 
     "UDF_Experience_Detail", 
-    "UDF_Qualifications_and_Competencies", 
+    "Qualifications_and_Competencies", 
     "UDF_Nature_of_Work", 
-    "UDF_Physical_Requirements",
+    "UDF_Physical_Requirements"
    ];
+
+   fieldsWithBulletList: string[] = [
+    "Essential_Duties_and_Responsibilities", 
+    "Qualifications_and_Competencies"
+   ];
+
+
 
   constructor(private jobDetailsService: JobDetailsService) { }
 
@@ -53,28 +60,52 @@ export class CompanyJobComponent implements OnInit, AfterViewInit {
         var details: JobDetails = res as JobDetails;
         this.jobDetails = details;
         console.log("DETAILS: [" + details.JDMJobDescHistoryID + "]");
-        var essentialDuties = details.UDF_Essential_Duties_and_Responsibilities.replace(" |||", "");
-        //this.jobDetails.UDF_Essential_Duties_and_Responsibilities = essentialDuties;
-        var bullets: string[] = essentialDuties.split("• ");
-        bullets = this.formatBullets(bullets);
-        this.jobDetails.Essential_Responsibilities = bullets;
+
+        var field1 = details.UDF_Essential_Duties_and_Responsibilities;
+        var bullets1 = this.formatBullets(field1);
+        this.jobDetails.Essential_Duties_and_Responsibilities = bullets1;
+
+        var field2 = details.UDF_Qualifications_and_Competencies;
+        var bullets2 = this.formatBullets(field2);
+        this.jobDetails.Qualifications_and_Competencies = bullets2;
      })
       .catch(err => {
         console.error(err);
       });
   }
 
-  toggleIcon(){
+  formatBullets(field: string): string[] {
+    var bullets: string[] = field.split("•");
+    let output: string[] = [];
+    for (var bul in bullets){
+      if (bullets[bul].length > 0){
+        bullets[bul] = bullets[bul].replace("|||", "");
+        output.push(bullets[bul]);
+      }
+    }
+    return output;
+  }
+
+isBulleted(key){
+    for (var s in this.fieldsWithBulletList){
+      if (this.fieldsWithBulletList[s].indexOf(String(key)) == 0){
+       return true;
+      }
+    }
+   return false;
+  }
+
+ toggleIcon(){
     console.log('toggle!');
     this.expanded = !this.expanded;
   }
 
-  formatBullets(essentialDuties: string[]): string[] {
+  formatBulletsxxx(bullets: string[]): string[] {
     let output: string[] = [];
-    for (var duty in essentialDuties){
-      if (essentialDuties[duty].length > 0){
-        essentialDuties[duty] = essentialDuties[duty].replace("|||", "");
-        output.push(essentialDuties[duty]);
+    for (var bul in bullets){
+      if (bullets[bul].length > 0){
+        bullets[bul] = bullets[bul].replace("|||", "");
+        output.push(bullets[bul]);
       }
     }
     return output;

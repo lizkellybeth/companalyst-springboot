@@ -29,7 +29,8 @@ export interface JobDetails {
     UDF_Nature_of_Work: string
     UDF_Physical_Requirements: string
    
-    Essential_Responsibilities: string[];
-    
+    Essential_Duties_and_Responsibilities: Array<string>;
+    Qualifications_and_Competencies: Array<string>;
+
 
 }
